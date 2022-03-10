@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         [sylin527] nexusmods.com Simplify files tab
 // @namespace    https://www.nexusmods.com/
-// @version      1.3
+// @version      1.4
 // @description  Simplify files tab for saving by SingleFileZ or SingleFile. Remove unnecessary UI, show all file description, etc. After saving, you can show/hide the real filenames. Recommend to instanll "[sylin527] nexusmods.com Tweak page title" to get more detailed page title.
 // @author       sylin527
 // @include      https://www.nexusmods.com/*/mods/*
@@ -11,9 +11,6 @@
 // @run-at       document-idle
 // ==/UserScript==
 ;(function(){
-// deno-fmt-ignore-file
-// deno-lint-ignore-file
-// This code was bundled using `deno bundle` and it's not recommended to edit it manually
 
 const headerSelector = 'header#head';
 const mainContentSelector = 'div#mainContent';
@@ -34,7 +31,6 @@ const sortByRelativeSelector = `div.file-category-header>div:nth-of-type(1)`;
 const fileDtRelativeSelector = 'dl.accordion>dt';
 const downloadedIconRelativeSelector = 'div>i.material-icons';
 const dateDownloadedRelativeSelector = 'div>div.file-download-stats>ul>li.stat-downloaded';
-const toggleFileDdRelativeSelector = 'div>div.acc-status';
 const fileDdRelativeSelector = 'dl.accordion>dd';
 const fileDescriptionRelativeSelector = 'div.tabbed-block:nth-of-type(1)';
 const downloadButtonsContainerRelativeSelector = `div.tabbed-block:nth-of-type(2)`;
@@ -63,7 +59,6 @@ const simplifyFileDts = function() {
     for(let i = 0; i < dts.length; i++){
         dts[i].querySelector(downloadedIconRelativeSelector)?.remove();
         dts[i].querySelector(dateDownloadedRelativeSelector)?.remove();
-        dts[i].querySelector(toggleFileDdRelativeSelector)?.remove();
         dts[i].style.background = '#2d2d2d';
     }
 };
@@ -73,8 +68,8 @@ const addShowRealFilenameToggle = function() {
     input.setAttribute('type', 'checkbox');
     const i = document.createElement('i');
     i.setAttribute('class', 'sylin527_show_text');
-    i.setAttribute('checked_text', 'Hide Real Filenames');
-    i.setAttribute('unchecked_text', 'Show Real Filenames');
+    i.setAttribute('checked_text', 'Show Real Filenames');
+    i.setAttribute('unchecked_text', 'Hide Real Filenames');
     modFilesElem = getmodFilesElement();
     modFilesElem.insertBefore(i, modFilesElem.firstChild);
     modFilesElem.insertBefore(input, modFilesElem.firstChild);
@@ -126,7 +121,7 @@ const addShowRealFilenameToggle = function() {
     `, ++ruleIndex);
     sheet.insertRule(`
     input.sylin527_show_toggle:checked ~ div dd p.sylin527_real_filename {
-      display: block;
+      display: none;
     }
     `, ++ruleIndex);
 };
@@ -141,7 +136,6 @@ const simplifyFileDds = function() {
     p.${realClass} {
       color: #8197ec;
       margin-top: 20xp;
-      display: none;
     }
     `, 0);
     for(let i = 0; i < dds.length; i++){

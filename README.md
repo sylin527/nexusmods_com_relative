@@ -2,6 +2,22 @@
 
 Personal resources relative to nexusmods.com.
 
+## Userscripts
+
+Just support English.
+
+**Install**: Go to [greasyfork.org](https://greasyfork.org/scripts/by-site/nexusmods.com?filter_locale=0), show all languages, then find.
+
+TODO  截图 GIF
+
+- ### Copied mod name and version
+
+- ### Simplify files tab
+
+- ### Simplify mod pages
+
+- ### Tweak page title
+
 ## Development
 
 ### 多个脚本获取相同的信息, 多次同样的 DOM 操作

@@ -13,7 +13,7 @@ const createUiRoot = function (): HTMLDivElement {
   const button = document.createElement('button')
   button.innerText = 'Copy'
   const message = document.createElement('span')
-  message.innerText = 'Copied mod name and version.'
+  message.innerText = 'Copied mod name and version'
   rootDiv.append(button, message)
   const pagetitle = document.querySelector('#pagetitle')
   // 表示 mod name 的 <h1> 的后一个兄弟元素
@@ -51,6 +51,7 @@ const createUiRoot = function (): HTMLDivElement {
       padding: 0 1.2rem;
       line-height: 33px;
       vertical-align: middle;
+      font-weight: 400;
     }
     `,
     ++ruleIndex
@@ -58,8 +59,8 @@ const createUiRoot = function (): HTMLDivElement {
   sheet.insertRule(
     `
     #${rootUiId} > span {
-      background-color: #333333a3;
-      color: #e6e6e6;
+      background-color: rgba(51, 51, 51, 0.5);
+      color: hotpink;
       padding: 8px;
       border-radius: 5px;
       margin-left: 1rem;

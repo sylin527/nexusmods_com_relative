@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         [sylin527] nexusmods.com Copy mod name and version
 // @namespace    https://www.nexusmods.com/
-// @version      1.0
+// @version      1.1
 // @description  Copy mod name and version.
 // @author       sylin527
 // @include      https://www.nexusmods.com/*/mods/*
@@ -11,9 +11,6 @@
 // @run-at       document-idle
 // ==/UserScript==
 ;(function(){
-// deno-fmt-ignore-file
-// deno-lint-ignore-file
-// This code was bundled using `deno bundle` and it's not recommended to edit it manually
 
 const modNameSelector = 'head>meta[property="og:title"]';
 const modInfoContainerSelector = 'section#section';
@@ -32,7 +29,7 @@ const createUiRoot = function() {
     const button = document.createElement('button');
     button.innerText = 'Copy';
     const message = document.createElement('span');
-    message.innerText = 'Copied mod name and version.';
+    message.innerText = 'Copied mod name and version';
     rootDiv.append(button, message);
     const pagetitle = document.querySelector('#pagetitle');
     const nameNextElem = pagetitle.querySelector('ul.stats');
@@ -61,12 +58,13 @@ const createUiRoot = function() {
       padding: 0 1.2rem;
       line-height: 33px;
       vertical-align: middle;
+      font-weight: 400;
     }
     `, ++ruleIndex);
     sheet.insertRule(`
     #${rootUiId} > span {
-      background-color: #333333a3;
-      color: #e6e6e6;
+      background-color: rgba(51, 51, 51, 0.5);
+      color: hotpink;
       padding: 8px;
       border-radius: 5px;
       margin-left: 1rem;
