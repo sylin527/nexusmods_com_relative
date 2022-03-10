@@ -1,4 +1,4 @@
-import { MOD_PAGE_URL_REGEXP } from './tabs_shared_content.ts'
+import { modPageUrlRegexp } from './tabs_shared_content.ts'
 
 import { delay } from '../util.ts'
 
@@ -18,27 +18,27 @@ import { delay } from '../util.ts'
   </div>
 </div>
 */
-export const DESCRIPTION_TAB_ROOT_SELECTOR = 'div.tabcontent.tabcontent-mod-page'
+export const descriptionTabRootSelector = 'div.tabcontent.tabcontent-mod-page'
 
-export const TAB_DESCRIPTION_CONTAINER_SELECTOR = 'div.container.tab-description'
-
-/**
- * relative to `div.container.tab-description`
- */
-export const ABOUT_THIS_MOD_RELATIVE_SELECTOR = 'h2#description_tab_h2'
+export const tabDescriptionContainerSelector = 'div.container.tab-description'
 
 /**
  * relative to `div.container.tab-description`
  */
-export const DOWNLOADED_OR_NOT_RELATIVE_SELECTOR = 'div.modhistory'
+export const aboutThisModRelativeSelector = 'h2#description_tab_h2'
 
-export const REPORT_ABUSE_RELATIVE_SELECTOR = 'ul.actions'
+/**
+ * relative to `div.container.tab-description`
+ */
+export const downloadedOrNotRelativeSelector = 'div.modhistory'
+
+export const reportAbuseRelativeSelector = 'ul.actions'
 
 /**
  * It's `<a>`.
  * relative to `div.container.tab-description`
  */
-export const SHARE_BUTTON_RELATIVE_SELECTOR = 'a.btn.inline-flex.button-share'
+export const shareButtonRelativeSelector = 'a.btn.inline-flex.button-share'
 
 /**
  * It is a <p>.
@@ -46,16 +46,16 @@ export const SHARE_BUTTON_RELATIVE_SELECTOR = 'a.btn.inline-flex.button-share'
  *
  * relative to `div.container.tab-description`
  */
-export const BRIEF_OVERVIEW_RELATIVE_SELECTOR = 'p:nth-of-type(1)'
+export const briefOverviewRelativeSelector = 'p:nth-of-type(1)'
 
 /**
  * It is a <dl>.
  *
  * relative to `div.container.tab-description`
  */
-export const ACCORDION_RELATIVE_SELECTOR = 'dl.accordion'
+export const accordionRelativeSelector = 'dl.accordion'
 
-export const MOD_DESCRIPTION_CONTAINER_SELECTOR = 'div.container.mod_description_container'
+export const modDescriptionContainerSelector = 'div.container.mod_description_container'
 
 /*
 <div class="bbc_spoiler">
@@ -63,11 +63,11 @@ export const MOD_DESCRIPTION_CONTAINER_SELECTOR = 'div.container.mod_description
 	<div style="display: none;"></div>
 </div>
 */
-export const SPOILER_RELATIVE_SELECTOR = 'div.bbc_spoiler'
+export const spoilerRelativeSelector = 'div.bbc_spoiler'
 
-export const HAS_DESCRIPTION_TAB_URL_REGEXP = MOD_PAGE_URL_REGEXP
+export const hasDescriptionTabUrlRegexp = modPageUrlRegexp
 
-let tabDescContainer: HTMLDivElement
+let tabDescContainer: HTMLDivElement | null = null
 
 /*
  避免这种风险就是 while() 循环:
@@ -78,13 +78,11 @@ let tabDescContainer: HTMLDivElement
   }
  */
 function getTabDescContainer() {
-  return tabDescContainer
-    ? tabDescContainer
-    : document.querySelector<HTMLDivElement>(TAB_DESCRIPTION_CONTAINER_SELECTOR)!
+  return tabDescContainer ? tabDescContainer : document.querySelector<HTMLDivElement>(tabDescriptionContainerSelector)!
 }
 
 export function hasDescriptionTab(url: string): boolean {
-  return HAS_DESCRIPTION_TAB_URL_REGEXP.test(url)
+  return hasDescriptionTabUrlRegexp.test(url)
 }
 
 export async function getBriefOverview(): Promise<string> {
@@ -93,7 +91,7 @@ export async function getBriefOverview(): Promise<string> {
     await delay(333)
     tabDescContainer = getTabDescContainer()
   }
-  const sde = tabDescContainer.querySelector<HTMLParagraphElement>(BRIEF_OVERVIEW_RELATIVE_SELECTOR)
+  const sde = tabDescContainer.querySelector<HTMLParagraphElement>(briefOverviewRelativeSelector)
   // 需要 trim(), 右边多了 1 个空格
   return sde!.innerText.trimEnd()
 }
@@ -125,31 +123,34 @@ function showAllAccordionDds(accordion: HTMLDListElement) {
   /* __start__ 以 CSS 代码模拟 show/hide Requirements, Changelogs 等等 */
   const newStyle = document.createElement('style')
   document.head.appendChild(newStyle)
-  const sheet = newStyle.sheet
+  const sheet = newStyle.sheet!
   /*
   设 `top: 56px` 是因 Mod page 的 `<header>` 的 `height: 56px`
   设 `background: transparent;` 以避免突兀
   设 `margin: -44.5px 0 1px 0;` 是因原 DOM Tree 的 <dt> 的 下间距为 1px, 盒模型高度为 43.5px.
   */
-  sheet?.insertRule(`
-input.sylin527_show_toggle {
-  cursor: pointer;
-  display: block;
-  height: 43.5px;
-  margin: -44.5px 0 1px 0; 
-  width: 100%;
-  z-index: 999;
-  position: relative;
-  opacity: 0;
-}
+  let ruleIndex = sheet.insertRule(`
+    input.sylin527_show_toggle {
+      cursor: pointer;
+      display: block;
+      height: 43.5px;
+      margin: -44.5px 0 1px 0; 
+      width: 100%;
+      z-index: 999;
+      position: relative;
+      opacity: 0;
+    }
   `)
   // SingFileZ 保存时, <dd> 已经显示 (display: block;) 了
   // 所以点击 input[type="checkbox"] 时应隐藏 <dd>
-  sheet?.insertRule(`
-input.sylin527_show_toggle:checked ~ dd{
-  display: none;
-}
-  `)
+  sheet.insertRule(
+    `
+    input.sylin527_show_toggle:checked ~ dd{
+      display: none;
+    }
+  `,
+    ++ruleIndex
+  )
   for (let i = 0; i < dts.length; i++) {
     dts[i].style.background = '#2d2d2d'
     // 移除右边的小箭头. 保留一下, 观感好些
@@ -181,12 +182,12 @@ input.sylin527_show_toggle:checked ~ dd{
 export function simplifyTabDescription() {
   tabDescContainer = getTabDescContainer()
   const tdc = tabDescContainer
-  tdc.querySelector(ABOUT_THIS_MOD_RELATIVE_SELECTOR)?.remove()
-  tdc.querySelector(DOWNLOADED_OR_NOT_RELATIVE_SELECTOR)?.remove()
-  tdc.querySelector(REPORT_ABUSE_RELATIVE_SELECTOR)?.remove()
-  tdc.querySelector(SHARE_BUTTON_RELATIVE_SELECTOR)?.remove()
+  tdc.querySelector(aboutThisModRelativeSelector)?.remove()
+  tdc.querySelector(downloadedOrNotRelativeSelector)?.remove()
+  tdc.querySelector(reportAbuseRelativeSelector)?.remove()
+  tdc.querySelector(shareButtonRelativeSelector)?.remove()
 
-  const accordion = tdc.querySelector<HTMLDListElement>(ACCORDION_RELATIVE_SELECTOR)
+  const accordion = tdc.querySelector<HTMLDListElement>(accordionRelativeSelector)
 
   if (accordion) {
     removeModsRequiringThis(accordion)
@@ -194,12 +195,13 @@ export function simplifyTabDescription() {
   }
 }
 
-let modDescContainer: HTMLDivElement
+let modDescContainer: HTMLDivElement | null = null
 
 function getModDescContainer() {
+  if (null === modDescContainer) {
+    modDescContainer = document.querySelector<HTMLDivElement>(modDescriptionContainerSelector)!
+  }
   return modDescContainer
-    ? modDescContainer
-    : document.querySelector<HTMLDivElement>(MOD_DESCRIPTION_CONTAINER_SELECTOR)!
 }
 
 /*

@@ -16,7 +16,7 @@ import {
   simplifyFileDts,
 } from '../mod_page/files_tab.ts'
 import { whenClickModTabs } from '../mod_page/tabs_shared_content.ts'
-import { createUIRootElement } from './ui.ts'
+import { createUIRootElement, removeSylin527Ui } from './ui.ts'
 import { delay } from '../util.ts'
 
 const uiRootElem = createUIRootElement()
@@ -31,14 +31,16 @@ const createEntryElement = function (
   return button
 }
 
+
+
 const entryElem = createEntryElement(uiRootElem)
 
 let oldUrl = window.location.href
 
-const checkUrl = async function () {
+const checkUrl = function () {
   const style = entryElem.style
   // 貌似文件信息都是后来获取的, 延迟下
-  await delay(500)
+  //await delay(500)
   function checkTab(url: string) {
     if (isFilesTab(url)) {
       style.display = 'block'
@@ -65,7 +67,7 @@ const simplifyFilesTab = function () {
     simplifyFileDts()
     simplifyFileDds()
     setFilesTabAsTopElement()
-    uiRootElem.remove()
+    removeSylin527Ui()
   })
   checkUrl()
 }

@@ -7,16 +7,16 @@
 /**
  * <meta property="og:site_name" content="Nexus Mods :: Skyrim Special Edition">
  */
- export const GAME_NAME_SELECTOR = 'head>meta[property="og:site_name"]'
+ export const gameNameSelector = 'head>meta[property="og:site_name"]'
  /**
   * 如 <meta property="og:title" content="Aspens Ablaze">
   * Aspens Ablaze 是 mod 名
   */
- export const MOD_NAME_SELECTOR = 'head>meta[property="og:title"]'
+ export const modNameSelector = 'head>meta[property="og:title"]'
  
- export const HEADER_SELECTOR = 'header#head'
+ export const headerSelector = 'header#head'
  
- export const MAIN_CONTENT_SELECTOR = 'div#mainContent'
+ export const mainContentSelector = 'div#mainContent'
  
  /**
   * base info + description tab
@@ -24,16 +24,16 @@
   * Contains game id and mod id.
   * <section id="section" class="modpage" data-game-id="1704" data-mod-id="1089"> ...
   */
- export const MOD_INFO_CONTAINER_SELECTOR = 'section#section'
+ export const modInfoContainerSelector = 'section#section'
  
- export const GALLERY_CONTAINER_SELECTOR = 'div#sidebargallery'
+ export const galleryContainerSelector = 'div#sidebargallery'
  
  /**
-  * relative to GALLERY_CONTAINER_SELECTOR
+  * relative to galleryContainerSelector
   */
- export const GALLERY_RELATIVE_SELECTOR = 'ul.thumbgallery.gallery.clearfix'
+ export const galleryRelativeSelector = 'ul.thumbgallery.gallery.clearfix'
  
- export const MOD_VERSION_SELECTOR =
+ export const modVersionSelector =
    'div#pagetitle>ul.stats.clearfix>li.stat-version>div.statitem>div.stat'
  
  /*
@@ -41,7 +41,7 @@
  <!-- Add media, Tracking, ... -->
  </ul>
  */
- export const MOD_ACTIONS_SELECTOR = 'div#pagetitle>ul.modactions'
+ export const modActionsSelector = 'div#pagetitle>ul.modactions'
  
  /*
  共用部分, 下方的 tab 导航
@@ -56,24 +56,24 @@
    <li<span>Stats</span></li>
  </ul>
  */
- export const MODTABS_SELECTOR = '#section div.tabs ul.modtabs'
+ export const modtabsSelector = '#section div.tabs ul.modtabs'
  
  /**
   * 位于 #mainContent 内部
   */
- export const BACK_TO_TOP_SELECTOR = 'div#rj-back-to-top'
+ export const backToTopSelector = 'div#rj-back-to-top'
  
- export const FOOTER_SELECTOR = 'footer#rj-footer'
+ export const footerSelector = 'footer#rj-footer'
  
- export const MOD_PAGE_URL_REGEXP = /(?<schema>(https|http):\/\/)(?<domain>(www.)?nexusmods.com)\/\w+\/mods\/([0-9]+(\/)?(\?)?(tab=description)?)$/
+ export const modPageUrlRegexp = /((https|http):\/\/)((www.)?nexusmods.com)\/\w+\/mods\/([0-9]+(\/)?(\?)?(tab=description)?)$/
 
 const modInfoContainer = document.querySelector<HTMLElement>(
-  MOD_INFO_CONTAINER_SELECTOR
+  modInfoContainerSelector
 )
 
 export function getModName(): string {
   return document
-    .querySelector<HTMLMetaElement>(MOD_NAME_SELECTOR)!
+    .querySelector<HTMLMetaElement>(modNameSelector)!
     .getAttribute('content')!
 }
 
@@ -83,13 +83,13 @@ export function getModName(): string {
  */
 export function getModVersion(): string {
   return document
-    .querySelector<HTMLDivElement>(MOD_VERSION_SELECTOR)!
+    .querySelector<HTMLDivElement>(modVersionSelector)!
     .innerText
 }
 
 /**
  * Clean global background.
- * 无法减小保存文件的大小, 不建议使用
+ * 覆盖 '::before' 的 background image 至, 无法减小 SingFileZ 保存文件的大小, 不建议使用
  */
 export function clearBodyBackground(): void {
   const bodyElement = document.querySelector('body')
@@ -123,13 +123,13 @@ export function removeFeature(): void {
 }
 
 export function removeModActions() {
-  document.querySelector(MOD_ACTIONS_SELECTOR)?.remove()
+  document.querySelector(modActionsSelector)?.remove()
 }
 
 export function removeModGallery() {
   if (null === modInfoContainer) return
   modInfoContainer
-    .querySelector<HTMLDivElement>(GALLERY_CONTAINER_SELECTOR)
+    .querySelector<HTMLDivElement>(galleryContainerSelector)
     ?.remove()
 }
 
@@ -141,9 +141,9 @@ export function setModInfoContainerAsTopElement() {
     modInfoContainer.style.margin = '0 auto'
     body.style.marginTop = '0'
     body.insertBefore(modInfoContainer, body.firstChild)
-    document.querySelector<HTMLHeadElement>(HEADER_SELECTOR)?.remove()
-    document.querySelector<HTMLDivElement>(MAIN_CONTENT_SELECTOR)?.remove()
-    document.querySelector(FOOTER_SELECTOR)?.remove()
+    document.querySelector<HTMLHeadElement>(headerSelector)?.remove()
+    document.querySelector<HTMLDivElement>(mainContentSelector)?.remove()
+    document.querySelector(footerSelector)?.remove()
     const scripts = document.querySelectorAll('script')
     for (let i = 0; i < scripts.length; i++) {
       scripts[i].remove()
@@ -157,12 +157,12 @@ export function setModInfoContainerAsTopElement() {
 
 export function whenClickModTabs(handler: (event: MouseEvent) => unknown) {
   document
-    .querySelector<HTMLUListElement>(MODTABS_SELECTOR)
+    .querySelector<HTMLUListElement>(modtabsSelector)
     ?.addEventListener('click', (event) => {
       handler(event)
     })
 }
 
 export function isModPage(url: string): boolean {
-  return MOD_PAGE_URL_REGEXP.test(url)
+  return modPageUrlRegexp.test(url)
 }

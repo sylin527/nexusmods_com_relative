@@ -10,12 +10,12 @@ export const createUIRootElement = function (): HTMLDivElement {
     entryElem.setAttribute('id', 'sylin527UiContainer')
     const newStyle = document.createElement('style')
     document.head.appendChild(newStyle)
-    const sheet = newStyle.sheet
+    const sheet = newStyle.sheet!
     /*
     设 `top: 56px` 是因 Mod page 的 `<header>` 的 `height: 56px`
     设 `background: transparent;` 以避免突兀
-    */ 
-    sheet?.insertRule(
+    */
+    let ruleIndex = sheet.insertRule(
       `
       #sylin527UiContainer {
         display: block;
@@ -27,14 +27,13 @@ export const createUIRootElement = function (): HTMLDivElement {
         max-width: 200px;
         background: transparent;
       }
-      `,
-      0
+      `
     )
     /*
     默认隐藏
     备用 background: #ca2c76
     */
-    sheet?.insertRule(
+    sheet.insertRule(
       `#sylin527UiContainer > a, #sylin527UiContainer > button {
         display: none;
         padding: 8px;
@@ -47,9 +46,16 @@ export const createUIRootElement = function (): HTMLDivElement {
         margin-top: 5px;
       }
       `,
-      0
+      ++ruleIndex
     )
     document.createElement('body')!.append(entryElem)
   }
   return entryElem
+}
+
+export const removeSylin527Ui = function () {
+  const roots = document.querySelectorAll('div[id^=sylin527]')
+  for (let i = 0; i < roots.length; i++) {
+    roots[i].remove()
+  }
 }

@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         [sylin527] nexusmods.com Simplify mod pages
+// @name         [sylin527] nexusmods.com Copy mod name and version
 // @namespace    https://www.nexusmods.com/
-// @version      1.3
-// @description  Simplify mod pages for saving by SingleFileZ or SingleFile. Remove unnecessary UI. After saving, you can show/hide details of "Requirements", "Donations", etc.
+// @version      1.0
+// @description  Copy mod name and version.
 // @author       sylin527
 // @include      https://www.nexusmods.com/*/mods/*
 // @icon         https://www.nexusmods.com/favicon.ico

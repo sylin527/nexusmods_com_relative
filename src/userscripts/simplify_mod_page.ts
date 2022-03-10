@@ -17,7 +17,7 @@ import {
   replaceYoutubeVideosToUrls,
 } from '../mod_page/description_tab.ts'
 
-import { createUIRootElement } from './ui.ts'
+import { createUIRootElement, removeSylin527Ui } from './ui.ts'
 import { delay } from '../util.ts'
 
 function tweakTitleText() {
@@ -55,8 +55,8 @@ const entryElem = createEntryElement(uiRootElem)
 
 let oldUrl = window.location.href
 
-const checkUrl = async function () {
-  await delay(500)
+const checkUrl = function () {
+  // await delay(500)
   const style = entryElem.style
   function checkTab(url: string) {
     if (isModPage(url)) {
@@ -87,7 +87,7 @@ const simplifyModPage = function () {
     showSpoilers()
     replaceYoutubeVideosToUrls()
     setModInfoContainerAsTopElement()
-    uiRootElem.remove()
+    removeSylin527Ui()
   })
   checkUrl()
 }

@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         [sylin527] nexusmods.com Simplify files tab
 // @namespace    https://www.nexusmods.com/
-// @version      1.1
-// @description  Simplify files tab for saving by SingleFileZ or SingleFile. Remove unnecessary UI, add the real filename to file description, show all file description, etc. Recommend to instanll "[sylin527] nexusmods.com Tweak page title" to get more detailed page title.
+// @version      1.3
+// @description  Simplify files tab for saving by SingleFileZ or SingleFile. Remove unnecessary UI, show all file description, etc. After saving, you can show/hide the real filenames. Recommend to instanll "[sylin527] nexusmods.com Tweak page title" to get more detailed page title.
 // @author       sylin527
 // @include      https://www.nexusmods.com/*/mods/*
 // @icon         https://www.nexusmods.com/favicon.ico
@@ -11,83 +11,166 @@
 // @run-at       document-idle
 // ==/UserScript==
 ;(function(){
-const HEADER_SELECTOR = 'header#head';
-const MAIN_CONTENT_SELECTOR = 'div#mainContent';
-const MOD_INFO_CONTAINER_SELECTOR = 'section#section';
-const MODTABS_SELECTOR = '#section div.tabs ul.modtabs';
-const FOOTER_SELECTOR = 'footer#rj-footer';
-document.querySelector(MOD_INFO_CONTAINER_SELECTOR);
+// deno-fmt-ignore-file
+// deno-lint-ignore-file
+// This code was bundled using `deno bundle` and it's not recommended to edit it manually
+
+const headerSelector = 'header#head';
+const mainContentSelector = 'div#mainContent';
+const modInfoContainerSelector = 'section#section';
+const modtabsSelector = '#section div.tabs ul.modtabs';
+const footerSelector = 'footer#rj-footer';
+document.querySelector(modInfoContainerSelector);
 function whenClickModTabs(handler) {
-    document.querySelector(MODTABS_SELECTOR)?.addEventListener('click', (event)=>{
+    document.querySelector(modtabsSelector)?.addEventListener('click', (event)=>{
         handler(event);
     });
 }
-const FILES_TAB_SELECTOR = 'div.tabcontent.tabcontent-mod-page';
-const PREMIUM_BANNER_SELECTOR = 'div.tabcontent div.premium-banner.container';
-const MOD_FILES_SELECTOR = 'div#mod_files';
-`${MOD_FILES_SELECTOR} div.file-category-header>div:nth-of-type(1)`;
-const SORT_BY_RELATIVE_SELECTOR = `div.file-category-header>div:nth-of-type(1)`;
-const FILE_DT_RELATIVE_SELECTOR = 'dl.accordion>dt';
-const DOWNLOADED_ICON_RELATIVE_SELECTOR = 'div>i.material-icons';
-const DATE_DOWNLOADED_RELATIVE_SELECTOR = 'div>div.file-download-stats>ul>li.stat-downloaded';
-const TOGGLE_FILE_DD_RELATIVE_SELECTOR = 'div>div.acc-status';
-const FILE_DD_RELATIVE_SELECTOR = 'dl.accordion>dd';
-const FILE_DESCRIPTION_RELATIVE_SELECTOR = 'div.tabbed-block:first-child';
-const DOWNLOAD_BUTTONS_CONTAINER_RELATIVE_SELECTOR = `div.tabbed-block:nth-of-type(2)`;
-const PREVIEW_FILE_RELATIVE_SELECTOR = 'div.tabbed-block:last-child';
-const FILES_TAB_URL_REGEXP = /(?<schema>(https|http):\/\/)(?<domain>(www.)?nexusmods.com)\/\w+\/mods\/[0-9]+(\?tab=files)$/;
-const modFilesElem = document.querySelector(MOD_FILES_SELECTOR);
+const filesTabSelector = 'div.tabcontent.tabcontent-mod-page';
+const premiumBannerSelector = `${filesTabSelector} div.premium-banner.container`;
+const modFilesSelector = 'div#mod_files';
+`${modFilesSelector} div.file-category-header>div:nth-of-type(1)`;
+const sortByRelativeSelector = `div.file-category-header>div:nth-of-type(1)`;
+const fileDtRelativeSelector = 'dl.accordion>dt';
+const downloadedIconRelativeSelector = 'div>i.material-icons';
+const dateDownloadedRelativeSelector = 'div>div.file-download-stats>ul>li.stat-downloaded';
+const toggleFileDdRelativeSelector = 'div>div.acc-status';
+const fileDdRelativeSelector = 'dl.accordion>dd';
+const fileDescriptionRelativeSelector = 'div.tabbed-block:nth-of-type(1)';
+const downloadButtonsContainerRelativeSelector = `div.tabbed-block:nth-of-type(2)`;
+const previewFileRelativeSelector = 'div.tabbed-block:last-child';
+const filesTabUrlRegexp = /((https|http):\/\/)((www.)?nexusmods.com)\/\w+\/mods\/[0-9]+(\?tab=files)$/;
+let modFilesElem = null;
+const getmodFilesElement = function() {
+    if (null === modFilesElem) {
+        modFilesElem = document.querySelector(modFilesSelector);
+    }
+    return modFilesElem;
+};
 const removePremiumBanner = function() {
-    if (null == modFilesElem) return;
-    document.querySelector(PREMIUM_BANNER_SELECTOR)?.remove();
+    document.querySelector(premiumBannerSelector)?.remove();
 };
 const removeAllSortBys = function() {
-    if (null == modFilesElem) return;
-    const arrayLike = modFilesElem.querySelectorAll(SORT_BY_RELATIVE_SELECTOR);
+    modFilesElem = getmodFilesElement();
+    const arrayLike = modFilesElem.querySelectorAll(sortByRelativeSelector);
     for(let i = 0; i < arrayLike.length; i++){
         arrayLike[i].remove();
     }
 };
 const simplifyFileDts = function() {
-    if (null == modFilesElem) return;
-    const dts = modFilesElem.querySelectorAll(FILE_DT_RELATIVE_SELECTOR);
+    modFilesElem = getmodFilesElement();
+    const dts = modFilesElem.querySelectorAll(fileDtRelativeSelector);
     for(let i = 0; i < dts.length; i++){
-        dts[i].querySelector(DOWNLOADED_ICON_RELATIVE_SELECTOR)?.remove();
-        dts[i].querySelector(DATE_DOWNLOADED_RELATIVE_SELECTOR)?.remove();
-        dts[i].querySelector(TOGGLE_FILE_DD_RELATIVE_SELECTOR)?.remove();
+        dts[i].querySelector(downloadedIconRelativeSelector)?.remove();
+        dts[i].querySelector(dateDownloadedRelativeSelector)?.remove();
+        dts[i].querySelector(toggleFileDdRelativeSelector)?.remove();
         dts[i].style.background = '#2d2d2d';
     }
 };
+const addShowRealFilenameToggle = function() {
+    const input = document.createElement('input');
+    input.setAttribute('class', 'sylin527_show_toggle');
+    input.setAttribute('type', 'checkbox');
+    const i = document.createElement('i');
+    i.setAttribute('class', 'sylin527_show_text');
+    i.setAttribute('checked_text', 'Hide Real Filenames');
+    i.setAttribute('unchecked_text', 'Show Real Filenames');
+    modFilesElem = getmodFilesElement();
+    modFilesElem.insertBefore(i, modFilesElem.firstChild);
+    modFilesElem.insertBefore(input, modFilesElem.firstChild);
+    const newStyle = document.createElement('style');
+    document.head.appendChild(newStyle);
+    const sheet = newStyle.sheet;
+    let ruleIndex = sheet.insertRule(`
+    input.sylin527_show_toggle,
+    input.sylin527_show_toggle ~ i.sylin527_show_text,
+    input.sylin527_show_toggle ~ i.sylin527_show_text::after {
+      border: 0;
+      cursor: pointer;
+      box-sizing: border-box;
+      display: block;
+      height: 40px;
+      width: 300px;
+      z-index: 999;
+      position: relative;
+    }
+    `);
+    sheet.insertRule(`
+    input.sylin527_show_toggle {
+      margin: 0 auto;
+      z-index: 987654321;
+      opacity: 0;
+    }
+    `, ++ruleIndex);
+    sheet.insertRule(`
+    i.sylin527_show_text {
+      font-style: normal;
+      font-size: 18px;
+      background-color: #8197ec;
+      text-align: center;
+      line-height: 40px;
+      border-radius: 5px;
+      font-weight: 400;
+      margin: -40px auto -60px auto;
+    }
+    `, ++ruleIndex);
+    sheet.insertRule(`
+    input.sylin527_show_toggle ~ i.sylin527_show_text::after {
+      content: attr(unchecked_text);
+    }
+    `, ++ruleIndex);
+    sheet.insertRule(`
+    input.sylin527_show_toggle:checked ~ i.sylin527_show_text::after {
+      content: attr(checked_text);
+    }
+    `, ++ruleIndex);
+    sheet.insertRule(`
+    input.sylin527_show_toggle:checked ~ div dd p.sylin527_real_filename {
+      display: block;
+    }
+    `, ++ruleIndex);
+};
 const simplifyFileDds = function() {
-    if (null == modFilesElem) return;
-    const dds = modFilesElem.querySelectorAll(FILE_DD_RELATIVE_SELECTOR);
+    modFilesElem = getmodFilesElement();
+    const dds = modFilesElem.querySelectorAll(fileDdRelativeSelector);
+    const realClass = 'sylin527_real_filename';
+    const newStyle = document.createElement('style');
+    document.head.appendChild(newStyle);
+    const sheet = newStyle.sheet;
+    sheet?.insertRule(`
+    p.${realClass} {
+      color: #8197ec;
+      margin-top: 20xp;
+      display: none;
+    }
+    `, 0);
     for(let i = 0; i < dds.length; i++){
-        const previewFileElem = dds[i].querySelector(PREVIEW_FILE_RELATIVE_SELECTOR);
+        const previewFileElem = dds[i].querySelector(previewFileRelativeSelector);
         const realFilename = previewFileElem?.querySelector('a')?.getAttribute('data-url');
-        const fileDescElem = dds[i].querySelector(FILE_DESCRIPTION_RELATIVE_SELECTOR);
+        const fileDescElem = dds[i].querySelector(fileDescriptionRelativeSelector);
         const realFilenameP = document.createElement('p');
         if (typeof realFilename === 'string') {
+            realFilenameP.setAttribute('class', realClass);
             realFilenameP.innerText = realFilename;
-            realFilenameP.style.color = '#8197ec';
-            realFilenameP.style.marginTop = '20px';
         }
         fileDescElem?.append(realFilenameP);
         previewFileElem?.remove();
-        dds[i].querySelector(DOWNLOAD_BUTTONS_CONTAINER_RELATIVE_SELECTOR)?.remove();
+        dds[i].querySelector(downloadButtonsContainerRelativeSelector)?.remove();
         dds[i].style.display = 'block';
     }
+    addShowRealFilenameToggle();
 };
 const setFilesTabAsTopElement = function() {
-    const filesTab = document.querySelector(FILES_TAB_SELECTOR);
+    const filesTab = document.querySelector(filesTabSelector);
     const body = document.querySelector('body');
     if (null !== filesTab && null !== body) {
         filesTab.style.maxWidth = '1300px';
         filesTab.style.margin = '0 auto';
         body.style.marginTop = '0';
         body.insertBefore(filesTab, body.firstChild);
-        document.querySelector(HEADER_SELECTOR)?.remove();
-        document.querySelector(MAIN_CONTENT_SELECTOR)?.remove();
-        document.querySelector(FOOTER_SELECTOR)?.remove();
+        document.querySelector(headerSelector)?.remove();
+        document.querySelector(mainContentSelector)?.remove();
+        document.querySelector(footerSelector)?.remove();
         const scripts = document.querySelectorAll('script');
         for(let i = 0; i < scripts.length; i++){
             scripts[i].remove();
@@ -99,7 +182,7 @@ const setFilesTabAsTopElement = function() {
     }
 };
 function isFilesTab(url) {
-    return FILES_TAB_URL_REGEXP.test(url);
+    return filesTabUrlRegexp.test(url);
 }
 const createUIRootElement = function() {
     const sylin527UiContainer = '#sylin527UiContainer';
@@ -110,7 +193,7 @@ const createUIRootElement = function() {
         const newStyle = document.createElement('style');
         document.head.appendChild(newStyle);
         const sheet = newStyle.sheet;
-        sheet?.insertRule(`
+        let ruleIndex = sheet.insertRule(`
       #sylin527UiContainer {
         display: block;
         position: fixed;
@@ -121,8 +204,8 @@ const createUIRootElement = function() {
         max-width: 200px;
         background: transparent;
       }
-      `, 0);
-        sheet?.insertRule(`#sylin527UiContainer > a, #sylin527UiContainer > button {
+      `);
+        sheet.insertRule(`#sylin527UiContainer > a, #sylin527UiContainer > button {
         display: none;
         padding: 8px;
         cursor: pointer;
@@ -133,10 +216,16 @@ const createUIRootElement = function() {
         float: right;
         margin-top: 5px;
       }
-      `, 0);
+      `, ++ruleIndex);
         document.createElement('body').append(entryElem1);
     }
     return entryElem1;
+};
+const removeSylin527Ui = function() {
+    const roots = document.querySelectorAll('div[id^=sylin527]');
+    for(let i = 0; i < roots.length; i++){
+        roots[i].remove();
+    }
 };
 function delay(ms) {
     return new Promise((resolve)=>setTimeout(resolve, ms)
@@ -152,9 +241,8 @@ const createEntryElement = function(uiRootElement) {
 };
 const entryElem = createEntryElement(uiRootElem);
 let oldUrl = window.location.href;
-const checkUrl = async function() {
+const checkUrl = function() {
     const style = entryElem.style;
-    await delay(500);
     function checkTab(url) {
         if (isFilesTab(url)) {
             style.display = 'block';
@@ -179,7 +267,7 @@ const simplifyFilesTab = function() {
         simplifyFileDts();
         simplifyFileDds();
         setFilesTabAsTopElement();
-        uiRootElem.remove();
+        removeSylin527Ui();
     });
     checkUrl();
 };

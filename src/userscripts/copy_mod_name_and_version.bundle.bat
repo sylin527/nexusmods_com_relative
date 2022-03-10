@@ -1,6 +1,6 @@
 chcp 65001
 @echo off
-set script_name=simplify_mod_page
+set script_name=copy_mod_name_and_version
 del %script_name%.bundle.js
 rem type 读取文件内容
 rem type 不要在 `>>` 两边多写空格

@@ -1,3 +1,3 @@
-export const SKYRIM_SPECIAL_EDITION = 1704
+export const skyrimSpecialEdition = 1704
 
-export const SKYRIM = 110
+export const Skyrim = 110

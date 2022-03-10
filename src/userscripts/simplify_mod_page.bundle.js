@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         [sylin527] nexusmods.com Simplify mod pages
 // @namespace    https://www.nexusmods.com/
-// @version      1.0
+// @version      1.3
 // @description  Simplify mod pages for saving by SingleFileZ or SingleFile. Remove unnecessary UI. After saving, you can show/hide details of "Requirements", "Donations", etc.
 // @author       sylin527
 // @include      https://www.nexusmods.com/*/mods/*
@@ -15,22 +15,22 @@
 // deno-lint-ignore-file
 // This code was bundled using `deno bundle` and it's not recommended to edit it manually
 
-const MOD_NAME_SELECTOR = 'head>meta[property="og:title"]';
-const HEADER_SELECTOR = 'header#head';
-const MAIN_CONTENT_SELECTOR = 'div#mainContent';
-const MOD_INFO_CONTAINER_SELECTOR = 'section#section';
-const GALLERY_CONTAINER_SELECTOR = 'div#sidebargallery';
-const MOD_VERSION_SELECTOR = 'div#pagetitle>ul.stats.clearfix>li.stat-version>div.statitem>div.stat';
-const MOD_ACTIONS_SELECTOR = 'div#pagetitle>ul.modactions';
-const MODTABS_SELECTOR = '#section div.tabs ul.modtabs';
-const FOOTER_SELECTOR = 'footer#rj-footer';
-const MOD_PAGE_URL_REGEXP = /(?<schema>(https|http):\/\/)(?<domain>(www.)?nexusmods.com)\/\w+\/mods\/([0-9]+(\/)?(\?)?(tab=description)?)$/;
-const modInfoContainer = document.querySelector(MOD_INFO_CONTAINER_SELECTOR);
+const modNameSelector = 'head>meta[property="og:title"]';
+const headerSelector = 'header#head';
+const mainContentSelector = 'div#mainContent';
+const modInfoContainerSelector = 'section#section';
+const galleryContainerSelector = 'div#sidebargallery';
+const modVersionSelector = 'div#pagetitle>ul.stats.clearfix>li.stat-version>div.statitem>div.stat';
+const modActionsSelector = 'div#pagetitle>ul.modactions';
+const modtabsSelector = '#section div.tabs ul.modtabs';
+const footerSelector = 'footer#rj-footer';
+const modPageUrlRegexp = /((https|http):\/\/)((www.)?nexusmods.com)\/\w+\/mods\/([0-9]+(\/)?(\?)?(tab=description)?)$/;
+const modInfoContainer = document.querySelector(modInfoContainerSelector);
 function getModName() {
-    return document.querySelector(MOD_NAME_SELECTOR).getAttribute('content');
+    return document.querySelector(modNameSelector).getAttribute('content');
 }
 function getModVersion() {
-    return document.querySelector(MOD_VERSION_SELECTOR).innerText;
+    return document.querySelector(modVersionSelector).innerText;
 }
 function removeFeature() {
     if (null === modInfoContainer) return;
@@ -39,11 +39,11 @@ function removeFeature() {
     featureDiv?.setAttribute('id', 'nofeature');
 }
 function removeModActions() {
-    document.querySelector(MOD_ACTIONS_SELECTOR)?.remove();
+    document.querySelector(modActionsSelector)?.remove();
 }
 function removeModGallery() {
     if (null === modInfoContainer) return;
-    modInfoContainer.querySelector(GALLERY_CONTAINER_SELECTOR)?.remove();
+    modInfoContainer.querySelector(galleryContainerSelector)?.remove();
 }
 function setModInfoContainerAsTopElement() {
     if (null === modInfoContainer) return;
@@ -53,9 +53,9 @@ function setModInfoContainerAsTopElement() {
         modInfoContainer.style.margin = '0 auto';
         body.style.marginTop = '0';
         body.insertBefore(modInfoContainer, body.firstChild);
-        document.querySelector(HEADER_SELECTOR)?.remove();
-        document.querySelector(MAIN_CONTENT_SELECTOR)?.remove();
-        document.querySelector(FOOTER_SELECTOR)?.remove();
+        document.querySelector(headerSelector)?.remove();
+        document.querySelector(mainContentSelector)?.remove();
+        document.querySelector(footerSelector)?.remove();
         const scripts = document.querySelectorAll('script');
         for(let i = 0; i < scripts.length; i++){
             scripts[i].remove();
@@ -67,27 +67,27 @@ function setModInfoContainerAsTopElement() {
     }
 }
 function whenClickModTabs(handler) {
-    document.querySelector(MODTABS_SELECTOR)?.addEventListener('click', (event)=>{
+    document.querySelector(modtabsSelector)?.addEventListener('click', (event)=>{
         handler(event);
     });
 }
 function isModPage(url) {
-    return MOD_PAGE_URL_REGEXP.test(url);
+    return modPageUrlRegexp.test(url);
 }
 function delay(ms) {
     return new Promise((resolve)=>setTimeout(resolve, ms)
     );
 }
-const TAB_DESCRIPTION_CONTAINER_SELECTOR = 'div.container.tab-description';
-const ABOUT_THIS_MOD_RELATIVE_SELECTOR = 'h2#description_tab_h2';
-const DOWNLOADED_OR_NOT_RELATIVE_SELECTOR = 'div.modhistory';
-const REPORT_ABUSE_RELATIVE_SELECTOR = 'ul.actions';
-const SHARE_BUTTON_RELATIVE_SELECTOR = 'a.btn.inline-flex.button-share';
-const ACCORDION_RELATIVE_SELECTOR = 'dl.accordion';
-const MOD_DESCRIPTION_CONTAINER_SELECTOR = 'div.container.mod_description_container';
-let tabDescContainer;
+const tabDescriptionContainerSelector = 'div.container.tab-description';
+const aboutThisModRelativeSelector = 'h2#description_tab_h2';
+const downloadedOrNotRelativeSelector = 'div.modhistory';
+const reportAbuseRelativeSelector = 'ul.actions';
+const shareButtonRelativeSelector = 'a.btn.inline-flex.button-share';
+const accordionRelativeSelector = 'dl.accordion';
+const modDescriptionContainerSelector = 'div.container.mod_description_container';
+let tabDescContainer = null;
 function getTabDescContainer() {
-    return tabDescContainer ? tabDescContainer : document.querySelector(TAB_DESCRIPTION_CONTAINER_SELECTOR);
+    return tabDescContainer ? tabDescContainer : document.querySelector(tabDescriptionContainerSelector);
 }
 function removeModsRequiringThis(accordion) {
     const firstDt = accordion.querySelector('dt:nth-of-type(1)');
@@ -107,23 +107,23 @@ function showAllAccordionDds(accordion) {
     const newStyle = document.createElement('style');
     document.head.appendChild(newStyle);
     const sheet = newStyle.sheet;
-    sheet?.insertRule(`
-input.sylin527_show_toggle {
-  cursor: pointer;
-  display: block;
-  height: 43.5px;
-  margin: -44.5px 0 1px 0; 
-  width: 100%;
-  z-index: 999;
-  position: relative;
-  opacity: 0;
-}
+    let ruleIndex = sheet.insertRule(`
+    input.sylin527_show_toggle {
+      cursor: pointer;
+      display: block;
+      height: 43.5px;
+      margin: -44.5px 0 1px 0; 
+      width: 100%;
+      z-index: 999;
+      position: relative;
+      opacity: 0;
+    }
   `);
-    sheet?.insertRule(`
-input.sylin527_show_toggle:checked ~ dd{
-  display: none;
-}
-  `);
+    sheet.insertRule(`
+    input.sylin527_show_toggle:checked ~ dd{
+      display: none;
+    }
+  `, ++ruleIndex);
     for(let i = 0; i < dts.length; i++){
         dts[i].style.background = '#2d2d2d';
         dds[i].style.display = 'block';
@@ -140,19 +140,22 @@ input.sylin527_show_toggle:checked ~ dd{
 function simplifyTabDescription() {
     tabDescContainer = getTabDescContainer();
     const tdc = tabDescContainer;
-    tdc.querySelector(ABOUT_THIS_MOD_RELATIVE_SELECTOR)?.remove();
-    tdc.querySelector(DOWNLOADED_OR_NOT_RELATIVE_SELECTOR)?.remove();
-    tdc.querySelector(REPORT_ABUSE_RELATIVE_SELECTOR)?.remove();
-    tdc.querySelector(SHARE_BUTTON_RELATIVE_SELECTOR)?.remove();
-    const accordion = tdc.querySelector(ACCORDION_RELATIVE_SELECTOR);
+    tdc.querySelector(aboutThisModRelativeSelector)?.remove();
+    tdc.querySelector(downloadedOrNotRelativeSelector)?.remove();
+    tdc.querySelector(reportAbuseRelativeSelector)?.remove();
+    tdc.querySelector(shareButtonRelativeSelector)?.remove();
+    const accordion = tdc.querySelector(accordionRelativeSelector);
     if (accordion) {
         removeModsRequiringThis(accordion);
         showAllAccordionDds(accordion);
     }
 }
-let modDescContainer;
+let modDescContainer = null;
 function getModDescContainer() {
-    return modDescContainer ? modDescContainer : document.querySelector(MOD_DESCRIPTION_CONTAINER_SELECTOR);
+    if (null === modDescContainer) {
+        modDescContainer = document.querySelector(modDescriptionContainerSelector);
+    }
+    return modDescContainer;
 }
 function showSpoilers() {
     modDescContainer = getModDescContainer();
@@ -187,7 +190,7 @@ const createUIRootElement = function() {
         const newStyle = document.createElement('style');
         document.head.appendChild(newStyle);
         const sheet = newStyle.sheet;
-        sheet?.insertRule(`
+        let ruleIndex = sheet.insertRule(`
       #sylin527UiContainer {
         display: block;
         position: fixed;
@@ -198,8 +201,8 @@ const createUIRootElement = function() {
         max-width: 200px;
         background: transparent;
       }
-      `, 0);
-        sheet?.insertRule(`#sylin527UiContainer > a, #sylin527UiContainer > button {
+      `);
+        sheet.insertRule(`#sylin527UiContainer > a, #sylin527UiContainer > button {
         display: none;
         padding: 8px;
         cursor: pointer;
@@ -210,10 +213,16 @@ const createUIRootElement = function() {
         float: right;
         margin-top: 5px;
       }
-      `, 0);
+      `, ++ruleIndex);
         document.createElement('body').append(entryElem1);
     }
     return entryElem1;
+};
+const removeSylin527Ui = function() {
+    const roots = document.querySelectorAll('div[id^=sylin527]');
+    for(let i = 0; i < roots.length; i++){
+        roots[i].remove();
+    }
 };
 function tweakTitleText() {
     const title = document.querySelector('title');
@@ -230,8 +239,7 @@ const createEntryElement = function(uiRootElement) {
 };
 const entryElem = createEntryElement(uiRootElem);
 let oldUrl = window.location.href;
-const checkUrl = async function() {
-    await delay(500);
+const checkUrl = function() {
     const style = entryElem.style;
     function checkTab(url) {
         if (isModPage(url)) {
@@ -260,7 +268,7 @@ const simplifyModPage = function() {
         showSpoilers();
         replaceYoutubeVideosToUrls();
         setModInfoContainerAsTopElement();
-        uiRootElem.remove();
+        removeSylin527Ui();
     });
     checkUrl();
 };

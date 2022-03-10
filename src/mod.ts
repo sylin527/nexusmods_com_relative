@@ -12,15 +12,15 @@ export interface IMod {
   userImages: null
 }
 
-export const WIDGETS_PATH = '/Core/Libs/Common/Widgets/'
+export const widgetsPath = '/Core/Libs/Common/Widgets/'
 
-export const WIDGETS_BASE_URL = MainSite.SITE_URL + WIDGETS_PATH
+export const widgetsBaseUrl = MainSite.siteUrl + widgetsPath
 
 export const getAuthorImagesUrl = function (
   gameId: number,
   modId: number
 ): string {
-  return `${WIDGETS_BASE_URL}/ModImagesList?RH_ModImagesList1=game_id:${gameId},id:${modId}`
+  return `${widgetsBaseUrl}/ModImagesList?RH_ModImagesList1=game_id:${gameId},id:${modId}`
 }
 
 export const getUserImagesUrl = function (
@@ -28,18 +28,18 @@ export const getUserImagesUrl = function (
   modId: number
 ): string {
   // like https://www.nexusmods.com/Core/Libs/Common/Widgets/ModImagesList?RH_ModImagesList2=game_id:1704,id:35082
-  return `${WIDGETS_BASE_URL}/ModImagesList?RH_ModImagesList2=game_id:${gameId},id:${modId}`
+  return `${widgetsBaseUrl}/ModImagesList?RH_ModImagesList2=game_id:${gameId},id:${modId}`
 }
 
 export const getDescriptionTabUrl = function (
   gameId: number,
   modId: number
 ): string {
-  return `${WIDGETS_BASE_URL}/ModDescriptionTab?id=${modId}&game_id=${gameId}`
+  return `${widgetsBaseUrl}/ModDescriptionTab?id=${modId}&game_id=${gameId}`
 }
 
 export const getFilesTabUrl = function (gameId: number, modId: number): string {
-  return `${WIDGETS_BASE_URL}/ModFilesTab?id=${modId}&game_id=${gameId}`
+  return `${widgetsBaseUrl}/ModFilesTab?id=${modId}&game_id=${gameId}`
 }
 
 export const getImagesTabUrl = function (
@@ -47,24 +47,24 @@ export const getImagesTabUrl = function (
   modId: number
 ): string {
   // like https://www.nexusmods.com/Core/Libs/Common/Widgets/ModImagesTab?id=35082&game_id=1704
-  return `${WIDGETS_BASE_URL}/ModImagesTab?id=${modId}&game_id=${gameId}`
+  return `${widgetsBaseUrl}/ModImagesTab?id=${modId}&game_id=${gameId}`
 }
 
 export const getVideosTabUrl = function (
   gameId: number,
   modId: number
 ): string {
-  return `${WIDGETS_BASE_URL}/ModVideosTab?id=${modId}&game_id=${gameId}`
+  return `${widgetsBaseUrl}/ModVideosTab?id=${modId}&game_id=${gameId}`
 }
 
 export const getDocsTabUrl = function (gameId: number, modId: number): string {
-  return `${WIDGETS_BASE_URL}/ModDocumentationTab?id=${modId}&game_id=${gameId}`
+  return `${widgetsBaseUrl}/ModDocumentationTab?id=${modId}&game_id=${gameId}`
 }
 export const getBugsTabUrl = function (gameId: number, modId: number): string {
-  return `${WIDGETS_BASE_URL}/ModBugsTab?id=${modId}&game_id=${gameId}`
+  return `${widgetsBaseUrl}/ModBugsTab?id=${modId}&game_id=${gameId}`
 }
 export const getLogsTabUrl = function (gameId: number, modId: number): string {
-  return `${WIDGETS_BASE_URL}/ModActionLogTab?id=${modId}&game_id=${gameId}`
+  return `${widgetsBaseUrl}/ModActionLogTab?id=${modId}&game_id=${gameId}`
 }
 export const getStatsTabUrl = function (gameId: number, modId: number): string {
   /*
@@ -73,10 +73,10 @@ export const getStatsTabUrl = function (gameId: number, modId: number): string {
      json:   https://www.nexusmods.com/Core/Libs/Common/Widgets/Graph?GetModReleases&game_id=1704&mod_id=35082&startdate=0&enddate=1615479414
 
         */
-  return `${WIDGETS_BASE_URL}/ModStatsTab?id=${modId}&game_id=${gameId}`
+  return `${widgetsBaseUrl}/ModStatsTab?id=${modId}&game_id=${gameId}`
 }
 
 // TODO
 export const getPostsTabUrl = function (gameId: number, modId: number): string {
-  return `${WIDGETS_BASE_URL}/CommentContainer?id=tabbed=1&object_id=${modId}&game_id=${gameId}&object_type=1&thread_id=8629923&skip_opening_post=1`
+  return `${widgetsBaseUrl}/CommentContainer?id=tabbed=1&object_id=${modId}&game_id=${gameId}&object_type=1&thread_id=8629923&skip_opening_post=1`
 }

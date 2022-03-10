@@ -4,7 +4,7 @@
 // @match       https://www.nexusmods.com/*/mods/*
 // @run-at      document-idle
 // @grant       window.onurlchange
-// @version     1.1
+// @version     1.2
 // @license     GPLv3
 // @icon        https://www.nexusmods.com/favicon.ico
 // @author      sylin527
