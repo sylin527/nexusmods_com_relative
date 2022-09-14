@@ -1,6 +1,15 @@
 {
   "compilerOptions": {
+    "allowJs": false,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "inlineSourceMap": true,
+    "isolatedModules": true,
+    "lib": ["dom", "dom.iterable", "dom.asynciterable", "deno.ns"],
+    "module": "es6",
+    "moduleDetection": "force",
     "strict": true,
-    "lib": ["dom", "dom.iterable", "dom.asynciterable", "deno.ns"]
+    "target": "es6",
+    "useDefineForClassFields": true
   }
 }
