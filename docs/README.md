@@ -56,7 +56,7 @@ Unbelievable Grass 2 Redux 1.3.6(18.2.9) tab=files
 
 ### Copy Mod Name And Version (With Date Last Updated)
 
-![](user guide/Copy Mod and Version.png)
+![](user_guide/Copy_Mod_and_Version.png)
 
 In mod page(description tab), copy title to this format: 
 
@@ -74,22 +74,22 @@ Replace thumbnails to original, replace embedded YouTube videos to links.
 
 **Mod Page not simplified 1**
 
-![](user guide/Mod Page not simplified 1.png)
+![](user_guide/Mod_Page_not_simplified_1.png)
 
 
 **Mod Page simplified 1**
 
-![](user guide/Mod Page simplified 1.png)
+![](user_guide/Mod_Page_simplified_1.png)
 
 
 **Mod Page not simplified 2**
 
-![](user guide/Mod Page not simplified 2.png)
+![](user_guide/Mod_Page_not_simplified_2.png)
 
 
 **Mod Page simplified 2**
 
-![](user guide/Mod Page simplified 2.png)
+![](user_guide/Mod_Page_simplified_2.png)
 
 
 
@@ -103,13 +103,13 @@ Replace thumbnails to original, replace embedded YouTube videos to links.
 
 **Files Tab not simplified**
 
-![](user guide/Files Tab not simplified.png)
+![](user_guide/Files_Tab_not_simplified.png)
 
 
 
 **Files Tab simplified**
 
-![](user guide/Files Tab simplified.png)
+![](user_guide/Files_Tab_simplified.png)
 
 ### Simplify Posts Tab
 
@@ -137,11 +137,11 @@ open https://www.nexusmods.com/skyrimspecialedition/mods/9005/?tab=forum&topic_i
 
 **Forum Tab not simplified**
 
-![](user guide/Forum Tab not simplified.png)
+![](user_guide/Forum_Tab_not_simplified.png)
 
 **Forum Tab simplified**
 
-![](user guide/Forum Tab simplified.png)
+![](user_guide/Forum_Tab_simplified.png)
 
 ### Simplify Article Page
 
