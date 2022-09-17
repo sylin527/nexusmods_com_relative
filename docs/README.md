@@ -2,38 +2,152 @@
 
 Personal resources relative to nexusmods.com.
 
-## Userscripts for fast saving mod docs
+Now just a UserScript: Mod Documentations Utility.
+
+## UserScript: Mod Documentations Utility
+
+### Brief Overview
+
+Help to save the mod documentations to local disk.
+
+Simplify mod page, files tab, posts tab, forum tab, article page.
+
+Show requirements, changelogs, file descriptions and spoilers.
+
+Replace thumbnails to original, replace embedded YouTube videos to links.
+
+Remove unnecessary contents, such as page header, footer of nexusmods.com. 
+
+Remove mod base info content if it is not mod page.
+
+After saving s those pages by SingleFile, you can show/hide requirements, changelogs, spoilers, real file names downloaded, etc.
+
+### Installation
 
 Just support English.
 
-**Install**: Go to [greasyfork.org](https://greasyfork.org/scripts/by-site/nexusmods.com?filter_locale=0), show all languages, then find.
+Go to [greasyfork.org](https://greasyfork.org/scripts/by-site/nexusmods.com?filter_locale=0), show all languages, then find.
 
-TODO  截图 GIF
+### Tweak Page Title
 
-- ### Copied mod name and version
+In mod page(description tab), tweak title to this format: 
 
-- ### Simplify files tab
+`<mod_name> <mod_version>(<date_last_updated>): <brief_overview>`
 
-- ### Simplify mod pages
+In other tabs(files, posts, etc), tweak title to this format: 
 
-- ### Tweak page title
+`<mod_name> <mod_version>(<date_last_updated>) tab=<tab>`
 
-## Development
 
-**现在变量命名含义有些模糊. 后面可能会重构.**
 
-### 多个脚本获取相同的信息, 多次同样的 DOM 操作
+Example: Open https://www.nexusmods.com/skyrim/mods/88876
 
-**解决方案**:
+In mod page(description tab), title is:
 
-对于一个网站, 创建一个全局变量, 用于存储每个脚本获取到的信息.
+```text
+Unbelievable Grass 2 Redux 1.3.6(18.2.9): This is a rework and update to the Unbelievable Grass 2 mod. Adds many grasses (with a high variety) to the different regions of Skyrim. The grasses were carefully choosen to fit the different regions. It was build on a tweak for better performance, while still providing high grass density.
+```
 
-所有 userscripts 都能获取读写该变量.
+In files tab, title is:
 
-建议变量名格式: 作者 + 表示互享的单词 + 表示意思的单词, 如 `sylin527SharedData`.
+```text
+Unbelievable Grass 2 Redux 1.3.6(18.2.9) tab=files
+```
 
-### 多个脚本都有自建的 UI 元素, 其中一个脚本想要清除这些
+### Copy Mod Name And Version (With Date Last Updated)
 
-**解决方案**:
+![](user guide/Copy Mod and Version.png)
 
-所有 userscripts 创建的 UI 入口元素格式 `div[id^=作者]`, 如 `div[id^=sylin527]`.
+In mod page(description tab), copy title to this format: 
+
+`<mod_name> <mod_version>(<date_last_updated>)`
+
+Example: Open https://www.nexusmods.com/skyrim/mods/88876
+
+Copy `Unbelievable Grass 2 Redux 1.3.6(18.2.9)` to clipboard.
+
+### Simplify Mod Page
+
+Show spoilers, requirements, changelogs etc.
+
+Replace thumbnails to original, replace embedded YouTube videos to links.
+
+**Mod Page not simplified 1**
+
+![](user guide/Mod Page not simplified 1.png)
+
+
+**Mod Page simplified 1**
+
+![](user guide/Mod Page simplified 1.png)
+
+
+**Mod Page not simplified 2**
+
+![](user guide/Mod Page not simplified 2.png)
+
+
+**Mod Page simplified 2**
+
+![](user guide/Mod Page simplified 2.png)
+
+
+
+### Simplify Files Tab
+
+Show description of files, spoilers and real file names downloaded.
+
+Replace thumbnails to original, replace embedded YouTube videos to links.
+
+
+
+**Files Tab not simplified**
+
+![](user guide/Files Tab not simplified.png)
+
+
+
+**Files Tab simplified**
+
+![](user guide/Files Tab simplified.png)
+
+### Simplify Posts Tab
+
+Show spoilers.
+
+Remove non-sticky comments.
+
+Replace thumbnails to original, replace embedded YouTube videos to links.
+
+### Simplify Forum Tab
+
+Show spoilers.
+
+Remove non-author comments.
+
+Replace thumbnails to original, replace embedded YouTube videos to links.
+
+
+
+Example: 
+
+open https://www.nexusmods.com/skyrimspecialedition/mods/9005/?tab=forum&topic_id=9351408
+
+
+
+**Forum Tab not simplified**
+
+![](user guide/Forum Tab not simplified.png)
+
+**Forum Tab simplified**
+
+![](user guide/Forum Tab simplified.png)
+
+### Simplify Article Page
+
+Show spoilers.
+
+Remove comments.
+
+Replace thumbnails to original, replace embedded YouTube videos to links.
+

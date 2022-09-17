@@ -1,4 +1,3 @@
-import { modPageUrlRegexp } from "./tabs_shared.ts";
 import { delay } from "./util.ts";
 
 /*
@@ -21,8 +20,7 @@ import { delay } from "./util.ts";
 /**
  * 容器 of 官方预设的描述模板
  */
-export const templateDescriptionContainerSelector =
-  "div.container.tab-description";
+export const templateDescriptionContainerSelector = "div.container.tab-description";
 
 /**
  * relative to `div.container.tab-description`
@@ -60,8 +58,7 @@ export const accordionRelativeSelector = "dl.accordion";
 /**
  * 容器 of 作者自定义的描述
  */
-export const authorDefinedDescriptionContainerSelector =
-  "div.container.mod_description_container";
+export const authorDefinedDescriptionContainerSelector = "div.container.mod_description_container";
 
 /*
 <div class="bbc_spoiler">
@@ -70,8 +67,6 @@ export const authorDefinedDescriptionContainerSelector =
 </div>
 */
 export const spoilerRelativeSelector = "div.bbc_spoiler";
-
-export const hasDescriptionTabUrlRegexp = modPageUrlRegexp;
 
 export function isDescriptionTab(tab: string): boolean {
   return tab === "description";
@@ -88,10 +83,7 @@ let authorDefinedDescriptionContainer: HTMLDivElement | null = null;
     tabDescContainer = getTabDescContainer()
   }
  */
-export async function getTemplateDescriptionContainer(
-  tabContentContainer: HTMLDivElement,
-  delayMs = 100
-) {
+export async function getTemplateDescriptionContainer(tabContentContainer: HTMLDivElement, delayMs = 100) {
   while (!templateDescriptionContainer) {
     await delay(delayMs);
     templateDescriptionContainer = tabContentContainer.querySelector<HTMLDivElement>(
@@ -101,14 +93,11 @@ export async function getTemplateDescriptionContainer(
   return templateDescriptionContainer;
 }
 
-export function getAuthorDefinedDescriptionContainer(
-  tabContentContainer: HTMLDivElement
-) {
+export function getAuthorDefinedDescriptionContainer(tabContentContainer: HTMLDivElement) {
   if (!authorDefinedDescriptionContainer) {
-    authorDefinedDescriptionContainer =
-    tabContentContainer.querySelector<HTMLDivElement>(
-        authorDefinedDescriptionContainerSelector
-      ) as HTMLDivElement;
+    authorDefinedDescriptionContainer = tabContentContainer.querySelector<HTMLDivElement>(
+      authorDefinedDescriptionContainerSelector
+    ) as HTMLDivElement;
   }
   return authorDefinedDescriptionContainer;
 }
@@ -117,15 +106,10 @@ export function getAuthorDefinedDescriptionContainer(
 let briefOverview: string | null = null;
 
 // mod 的 简述
-export function getBriefOverview(
-  templateDescriptionContainer: HTMLDivElement
-): string {
+export function getBriefOverview(templateDescriptionContainer: HTMLDivElement): string {
   if (!briefOverview) {
     // 从 other tabs 切换到 description tab, 等待description tab 的内容装载完成
-    const sde =
-      templateDescriptionContainer.querySelector<HTMLParagraphElement>(
-        briefOverviewRelativeSelector
-      );
+    const sde = templateDescriptionContainer.querySelector<HTMLParagraphElement>(briefOverviewRelativeSelector);
     // 需要 trim(), 右边多了 1 个空格
     briefOverview = sde!.innerText.trimEnd();
   }
@@ -137,20 +121,13 @@ export function getBriefOverview(
 export function removeModsRequiringThis(accordion: HTMLDListElement) {
   // 如果有 Requirements, 则第一个 `<dt>` 就是
   const firstDt = accordion.querySelector<HTMLElement>("dt:nth-of-type(1)");
-  const hasRequirementsDt = firstDt?.innerText
-    .trim()
-    .startsWith("Requirements");
+  const hasRequirementsDt = firstDt?.innerText.trim().startsWith("Requirements");
   if (hasRequirementsDt) {
     // divs.length 的值不一定. 有 Requirements, Mods requiring this, Nexus Requirements 等等
-    const divs = accordion.querySelectorAll(
-      "dd:nth-of-type(1)>div.tabbed-block"
-    );
+    const divs = accordion.querySelectorAll("dd:nth-of-type(1)>div.tabbed-block");
     if (divs) {
       for (let i = 0; i < divs.length; i++) {
-        const text =
-          divs[i].querySelector<HTMLHeadingElement>(
-            "h3:nth-of-type(1)"
-          )!.innerText;
+        const text = divs[i].querySelector<HTMLHeadingElement>("h3:nth-of-type(1)")!.innerText;
         if (text === "Mods requiring this file") divs[i].remove();
       }
     }
@@ -169,13 +146,14 @@ export function showAllAccordionDds(accordion: HTMLDListElement) {
   const newStyle = document.createElement("style");
   document.head.appendChild(newStyle);
   const sheet = newStyle.sheet!;
+  const accordionToggle = "sylin527_show_accordion_toggle";
   /*
   设 `top: 56px` 是因 Mod page 的 `<header>` 的 `height: 56px`
   设 `background: transparent;` 以避免突兀
   设 `margin: -44.5px 0 1px 0;` 是因原 DOM Tree 的 <dt> 的 下间距为 1px, 盒模型高度为 43.5px.
   */
   let ruleIndex = sheet.insertRule(`
-    input.sylin527_show_toggle {
+    input.${accordionToggle} {
       cursor: pointer;
       display: block;
       height: 43.5px;
@@ -190,7 +168,7 @@ export function showAllAccordionDds(accordion: HTMLDListElement) {
   // 所以点击 input[type="checkbox"] 时应隐藏 <dd>
   sheet.insertRule(
     `
-    input.sylin527_show_toggle:checked ~ dd{
+    input.${accordionToggle}:checked ~ dd{
       display: none;
     }
   `,
@@ -212,9 +190,9 @@ export function showAllAccordionDds(accordion: HTMLDListElement) {
 
     // new parent element which not effect cuurent UI views
     const newPar = document.createElement("div");
-    // HTML: <input class="sylin527_show_toggle" type="checkbox"/>
+    // HTML: <input class="${accordionToggle}" type="checkbox"/>
     const toggle = document.createElement("input");
-    toggle.setAttribute("class", "sylin527_show_toggle");
+    toggle.setAttribute("class", accordionToggle);
     toggle.setAttribute("type", "checkbox");
     dds[i].parentElement!.insertBefore(toggle, dds[i]);
     // Node.append() 相当于移动当前元素至某个元素内, 作为其子元素

@@ -1,5 +1,10 @@
 const body = document.body;
 
+
+export const infoButtonBackground = '#8197ec'
+export const warningButtonBackground = '#d98f40'
+
+
 // TODO TypeScript 怎么声明全局变量
 // var sylin527SharedData: Sylin527SharedData
 export type Sylin527SharedData = {
@@ -10,7 +15,7 @@ export type Sylin527SharedData = {
   briefOverview?: string;
 };
 
-export const mainContentMaxWidth = '1340px'
+export const mainContentMaxWidth = "1340px";
 
 export function setSectionAsTopElement() {
   const section = document.getElementById("section") as HTMLElement;
@@ -22,17 +27,122 @@ export function setSectionAsTopElement() {
   body.appendChild(sectionBackup);
 }
 
-/*
- * 显示
- * <div class="bbc_spoiler">
- *   <div>....</div>
- *   <div style="display: none;"></div>
- * </div>
- */
-export function showSpoilers(container: HTMLElement): void {
-  const contentDivs = container.querySelectorAll<HTMLDivElement>("div.bbc_spoiler>div:nth-of-type(2)");
-  for (let i = 0; i < contentDivs.length; i++) {
-    contentDivs[i].style.display = "block";
+const showSpoilerToggle = "sylin527_show_spoiler_toggle";
+// 为何不通过变量来确认有没有添加过相关样式? 
+// 怕 SingFile 保存 description tab 后, 把其中一些样式删掉了. 在要保存 files tab 样式就不准确了.
+function addShowSpoilerToggleStyle() {
+  const newStyle = document.createElement("style");
+  document.head.appendChild(newStyle);
+  const sheet = newStyle.sheet!;
+  let ruleIndex = sheet.insertRule(
+    `
+    input.${showSpoilerToggle},
+    input.${showSpoilerToggle} ~ i.sylin527_show_text,
+    input.${showSpoilerToggle} ~ i.sylin527_show_text::after {
+      border: 0;
+      cursor: pointer;
+      box-sizing: border-box;
+      display: inline-block;
+      height: 27px;
+      width: 60px;
+      z-index: 999;
+      position: relative;
+      vertical-align: middle;
+      text-align: center;
+    }
+    `
+  );
+
+  sheet.insertRule(
+    `
+    input.${showSpoilerToggle} {
+      margin-left: 1px;
+      z-index: 987654321;
+      opacity: 0;
+    }
+    `,
+    ++ruleIndex
+  );
+  sheet.insertRule(
+    `
+    input.${showSpoilerToggle} ~ i.sylin527_show_text {
+      font-style: normal;
+      margin-left: -60px;
+    }
+    `,
+    ++ruleIndex
+  );
+  sheet.insertRule(
+    `
+    input.${showSpoilerToggle} ~ i.sylin527_show_text::after {
+      content: attr(unchecked_text);
+      background-color: ${infoButtonBackground};
+      font-size: 12px;
+      color: #E6E6E6;
+      border-radius: 3px;
+      font-weight: 400;
+      line-height: 27px;
+    }
+    `,
+    ++ruleIndex
+  );
+  sheet.insertRule(
+    `
+    input.${showSpoilerToggle}:checked ~ i.sylin527_show_text::after {
+      content: attr(checked_text);
+      background-color: ${warningButtonBackground};
+    }
+    `,
+    ++ruleIndex
+  );
+  sheet.insertRule(
+    `
+    input.${showSpoilerToggle}:checked ~ div.bbc_spoiler_content {
+      display: none;
+    }
+    `,
+    ++ruleIndex
+  );
+  // CSS 控制 div.bbc_spoiler_content 显示
+  sheet.insertRule(
+    `
+    div.bbc_spoiler_content {
+      display: block;
+    }
+    `,
+    ++ruleIndex
+  );
+}
+
+// 显示 div.bbc_spoiler > div.bbc_spoiler_content
+// 保存后可以隐藏/显示 div.bbc_spoiler > div.bbc_spoiler_content
+// ---------------------------------
+// 最好一个 tab 只执行一次, 避免多次 addShowSpoilerToggleStyle
+export function showSpoilers(container: HTMLElement) {
+  addShowSpoilerToggleStyle();
+  const spoilers = container.querySelectorAll("div.bbc_spoiler");
+  for (let i = 0; i < spoilers.length; i++) {
+    const spoiler = spoilers[i];
+    spoiler.querySelector("div.bbc_spoiler_show")?.remove();
+    /*
+    <input class="sylin527_show_spoiler_toggle" type="checkbox" /><i class="bbc_spoiler_show sylin527_show_text"
+      checked_text="Show"
+      unchecked_text="Hide"></i>
+  */
+    const input = document.createElement("input");
+    input.setAttribute("class", showSpoilerToggle);
+    input.setAttribute("type", "checkbox");
+    const iElement = document.createElement("i");
+    iElement.setAttribute("class", "sylin527_show_text");
+    // unchecked 时显示, checked 之后隐藏
+    iElement.setAttribute("checked_text", "Show");
+    iElement.setAttribute("unchecked_text", "Hide");
+    const content = spoiler.querySelector("div.bbc_spoiler_content") as HTMLDivElement;
+    spoiler.insertBefore(input, content);
+    spoiler.insertBefore(iElement, content);
+    // js 控制的 style 属性比 css 优先级高
+    // 为了 css 控制 div.bbc_spoiler_content 的 display 属性, 移除 style 属性
+    content.removeAttribute("style");
   }
 }
 

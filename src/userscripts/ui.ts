@@ -1,15 +1,15 @@
-let uiRoot: HTMLDivElement | null = null;
+let actionContainer: HTMLDivElement | null = null;
 
 /**
  * 创建一个入口组件
  * @returns HTMLDivElement
  */
-function createUIRootElement(): HTMLDivElement {
-  const sylin527UiContainer = "#sylin527UiContainer";
-  let entryElem = document.querySelector<HTMLDivElement>(sylin527UiContainer);
-  if (null === entryElem) {
-    entryElem = document.createElement("div");
-    entryElem.setAttribute("id", "sylin527UiContainer");
+function createActionContainer(): HTMLDivElement {
+  const containerId = "sylin527ActionContainer";
+  let container = document.getElementById(containerId);
+  if (null === container) {
+    container = document.createElement("div");
+    container.setAttribute("id", containerId);
     const newStyle = document.createElement("style");
     document.head.appendChild(newStyle);
     const sheet = newStyle.sheet!;
@@ -19,7 +19,7 @@ function createUIRootElement(): HTMLDivElement {
     */
     let ruleIndex = sheet.insertRule(
       `
-      #sylin527UiContainer {
+      #${containerId} {
         display: block;
         position: fixed;
         right: 5px;
@@ -37,7 +37,7 @@ function createUIRootElement(): HTMLDivElement {
     备用 background: #ca2c76
     */
     sheet.insertRule(
-      `#sylin527UiContainer > a, #sylin527UiContainer > button {
+      `#${containerId} > a, #${containerId} > button {
         display: block;
         padding: 8px;
         cursor: pointer;
@@ -52,15 +52,15 @@ function createUIRootElement(): HTMLDivElement {
       ++ruleIndex
     );
   }
-  entryElem.style.zIndex = "999";
-  document.body.append(entryElem);
-  uiRoot = entryElem;
-  return entryElem;
+  container.style.zIndex = "999";
+  document.body.append(container);
+  actionContainer = container as HTMLDivElement;
+  return actionContainer;
 }
 
-export function getUiRootElement() {
-  if (uiRoot === null) uiRoot = createUIRootElement();
-  return uiRoot;
+export function getActionContainer() {
+  if (actionContainer === null) actionContainer = createActionContainer();
+  return actionContainer;
 }
 
 export const removeSylin527Ui = function () {

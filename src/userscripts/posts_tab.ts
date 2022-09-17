@@ -31,11 +31,10 @@ export function simplify() {
   const container = document.getElementById("comment-container") as HTMLDivElement;
   container.querySelector("div.head-nav")?.remove();
   container.querySelector("div.bottom-nav")?.remove();
-
+  showSpoilers(container);
   // 置顶评论
   const stickyLis = container.querySelectorAll<HTMLLIElement>("ol>li.comment-sticky");
   for (let i = 0; i < stickyLis.length; i++) {
-    showSpoilers(stickyLis[i]);
     replaceYoutubeVideosToAnchor(stickyLis[i]);
     replaceThumbnailUrlsToImageUrls(stickyLis[i]);
   }

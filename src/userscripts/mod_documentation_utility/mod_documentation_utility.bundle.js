@@ -1,18 +1,21 @@
 // ==UserScript==
-// @name        [sylin527] nexusmods.com Mod Documentation Utility
+// @name        sylin527's Mod Documentations Utility
 // @namespace   https://www.nexusmods.com/
-// @match       https://www.nexusmods.com/*/mods/*
+// @include     https://www.nexusmods.com/*/mods/*
+// @include     https://www.nexusmods.com/*/articles/*
 // @run-at      document-idle
 // @icon        https://www.nexusmods.com/favicon.ico
 // @grant       none
 // @license     GPLv3
-// @version     0.1.0.2022.9.15
+// @version     0.1.0.beta.2022.9.17
 // @author      sylin527
-// @description Mod Documentation Utility. Simplify mod page, files tab, post tab, forum tab. Then save the page by SingFile or other tools.
+// @description Help to save the mod documentations to local disk. Simplify mod page, files tab, posts tab, forum tab, article page, show requirements, changelogs, file descriptions and spoilers, replace thumbnails to original, replace embedded YouTube videos to links, remove unnecessary contents. After saving those pages by SingleFile, you can show/hide requirements, changelogs, spoilers, real file names downloaded, etc.
 // ==/UserScript==
 (() => {
   // ../shared.ts
   var body = document.body;
+  var infoButtonBackground = "#8197ec";
+  var warningButtonBackground = "#d98f40";
   var mainContentMaxWidth = "1340px";
   function setSectionAsTopElement() {
     const section = document.getElementById("section");
@@ -23,10 +26,105 @@
     body.innerHTML = "";
     body.appendChild(sectionBackup);
   }
+  var showSpoilerToggle = "sylin527_show_spoiler_toggle";
+  function addShowSpoilerToggleStyle() {
+    const newStyle = document.createElement("style");
+    document.head.appendChild(newStyle);
+    const sheet = newStyle.sheet;
+    let ruleIndex = sheet.insertRule(
+      `
+    input.${showSpoilerToggle},
+    input.${showSpoilerToggle} ~ i.sylin527_show_text,
+    input.${showSpoilerToggle} ~ i.sylin527_show_text::after {
+      border: 0;
+      cursor: pointer;
+      box-sizing: border-box;
+      display: inline-block;
+      height: 27px;
+      width: 60px;
+      z-index: 999;
+      position: relative;
+      vertical-align: middle;
+      text-align: center;
+    }
+    `
+    );
+    sheet.insertRule(
+      `
+    input.${showSpoilerToggle} {
+      margin-left: 1px;
+      z-index: 987654321;
+      opacity: 0;
+    }
+    `,
+      ++ruleIndex
+    );
+    sheet.insertRule(
+      `
+    input.${showSpoilerToggle} ~ i.sylin527_show_text {
+      font-style: normal;
+      margin-left: -60px;
+    }
+    `,
+      ++ruleIndex
+    );
+    sheet.insertRule(
+      `
+    input.${showSpoilerToggle} ~ i.sylin527_show_text::after {
+      content: attr(unchecked_text);
+      background-color: ${infoButtonBackground};
+      font-size: 12px;
+      color: #E6E6E6;
+      border-radius: 3px;
+      font-weight: 400;
+      line-height: 27px;
+    }
+    `,
+      ++ruleIndex
+    );
+    sheet.insertRule(
+      `
+    input.${showSpoilerToggle}:checked ~ i.sylin527_show_text::after {
+      content: attr(checked_text);
+      background-color: ${warningButtonBackground};
+    }
+    `,
+      ++ruleIndex
+    );
+    sheet.insertRule(
+      `
+    input.${showSpoilerToggle}:checked ~ div.bbc_spoiler_content {
+      display: none;
+    }
+    `,
+      ++ruleIndex
+    );
+    sheet.insertRule(
+      `
+    div.bbc_spoiler_content {
+      display: block;
+    }
+    `,
+      ++ruleIndex
+    );
+  }
   function showSpoilers(container) {
-    const contentDivs = container.querySelectorAll("div.bbc_spoiler>div:nth-of-type(2)");
-    for (let i = 0; i < contentDivs.length; i++) {
-      contentDivs[i].style.display = "block";
+    addShowSpoilerToggleStyle();
+    const spoilers = container.querySelectorAll("div.bbc_spoiler");
+    for (let i = 0; i < spoilers.length; i++) {
+      const spoiler = spoilers[i];
+      spoiler.querySelector("div.bbc_spoiler_show")?.remove();
+      const input = document.createElement("input");
+      input.setAttribute("class", showSpoilerToggle);
+      input.setAttribute("type", "checkbox");
+      const iElement = document.createElement("i");
+      iElement.setAttribute("class", "sylin527_show_text");
+      iElement.setAttribute("checked_text", "Show");
+      iElement.setAttribute("unchecked_text", "Hide");
+      const content = spoiler.querySelector("div.bbc_spoiler_content");
+      spoiler.insertBefore(input, content);
+      spoiler.insertBefore(iElement, content);
+      content.removeAttribute("style");
     }
   }
   function replaceYoutubeVideosToAnchor(container) {
@@ -81,9 +179,9 @@
     entityName = entityName.trim();
     return entityName.replace(/(\?)|(\*)|(:)|(<)|(>)|(")|(\/)|(\\)|(\|)/g, (match) => illegalCharMarkMapping[match]);
   };
-  var isSylin527 = true;
+  var isSylin527 = false;
 
-  // ../files_tab/files_tab.ts
+  // ../files_tab.ts
   var filesTabSelector = "div.tabcontent.tabcontent-mod-page";
   var premiumBannerSelector = `${filesTabSelector} div.premium-banner.container`;
   var modFilesSelector = "div#mod_files";
@@ -101,7 +199,7 @@
   }
   var modFilesElem = null;
   function getModFilesElement() {
-    if (modFilesElem === null) {
+    if (null === modFilesElem) {
       modFilesElem = document.querySelector(modFilesSelector);
     }
     return modFilesElem;
@@ -136,7 +234,8 @@
     const newStyle = document.createElement("style");
     document.head.appendChild(newStyle);
     const sheet = newStyle.sheet;
-    let ruleIndex = sheet.insertRule(`
+    let ruleIndex = sheet.insertRule(
+      `
     input.sylin527_show_toggle,
     input.sylin527_show_toggle ~ i.sylin527_show_text,
     input.sylin527_show_toggle ~ i.sylin527_show_text::after {
@@ -149,58 +248,85 @@
       z-index: 999;
       position: relative;
     }
-    `);
-    sheet.insertRule(`
+    `
+    );
+    sheet.insertRule(
+      `
     input.sylin527_show_toggle {
       margin: 0 auto;
       z-index: 987654321;
       opacity: 0;
     }
-    `, ++ruleIndex);
-    sheet.insertRule(`
+    `,
+      ++ruleIndex
+    );
+    sheet.insertRule(
+      `
     i.sylin527_show_text {
       font-style: normal;
       font-size: 18px;
-      background-color: #8197ec;
+      background-color: ${infoButtonBackground};
       text-align: center;
       line-height: 40px;
       border-radius: 5px;
       font-weight: 400;
       margin: -40px auto -60px auto;
     }
-    `, ++ruleIndex);
-    sheet.insertRule(`
+    `,
+      ++ruleIndex
+    );
+    sheet.insertRule(
+      `
     input.sylin527_show_toggle ~ i.sylin527_show_text::after {
       content: attr(unchecked_text);
     }
-    `, ++ruleIndex);
-    sheet.insertRule(`
+    `,
+      ++ruleIndex
+    );
+    sheet.insertRule(
+      `
+    input.sylin527_show_toggle:checked ~ i.sylin527_show_text {
+      background-color: ${warningButtonBackground};
+    }
+    `,
+      ++ruleIndex
+    );
+    sheet.insertRule(
+      `
     input.sylin527_show_toggle:checked ~ i.sylin527_show_text::after {
       content: attr(checked_text);
     }
-    `, ++ruleIndex);
-    sheet.insertRule(`
+    `,
+      ++ruleIndex
+    );
+    sheet.insertRule(
+      `
     input.sylin527_show_toggle:checked ~ div dd p.sylin527_real_filename {
       display: none;
     }
-    `, ++ruleIndex);
+    `,
+      ++ruleIndex
+    );
   }
   function simplifyFileDds(modFilesElem2) {
+    showSpoilers(modFilesElem2);
     const dds = modFilesElem2.querySelectorAll(fileDdRelativeSelector);
     const realClass = "sylin527_real_filename";
     const newStyle = document.createElement("style");
     document.head.appendChild(newStyle);
     const sheet = newStyle.sheet;
-    sheet?.insertRule(`
+    sheet?.insertRule(
+      `
     p.${realClass} {
       color: #8197ec;
       margin-top: 20xp;
     }
-    `, 0);
+    `,
+      0
+    );
     for (let i = 0; i < dds.length; i++) {
       const fd = dds[i].querySelector("div.files-description");
       if (fd) {
-        showSpoilers(fd);
         replaceYoutubeVideosToAnchor(fd);
         replaceThumbnailUrlsToImageUrls(fd);
       }
@@ -242,6 +368,10 @@
   var tabsContainerSelector = "div.tabs";
   var modTabsSelector = "#section div.tabs ul.modtabs";
   var tabContentContainerSelector = "div.tabcontent.tabcontent-mod-page";
+  var modPageUrlRegexp = /^((https|http):\/\/(www.)?nexusmods.com\/[a-z0-9]+\/mods\/[0-9]+)/;
+  function isModPageUrl(url) {
+    return modPageUrlRegexp.test(url);
+  }
   var modInfoContainer = null;
   function getModInfoContainer() {
     if (!modInfoContainer) {
@@ -249,16 +379,36 @@
     }
     return modInfoContainer;
   }
+  var modName = null;
   function getModName() {
-    const meta = head.querySelector(`meta[property="og:title"]`);
-    if (meta)
-      return meta.getAttribute("content");
-    const ul = document.getElementById("breadcrumb");
-    const li = ul.querySelector("li:last-child");
-    return li.innerText;
+    if (!modName) {
+      const meta = head.querySelector(`meta[property="og:title"]`);
+      if (meta) {
+        modName = meta.getAttribute("content");
+      } else {
+        const ul = document.getElementById("breadcrumb");
+        const li = ul.querySelector("li:last-child");
+        modName = li.innerText;
+      }
+    }
+    return modName;
   }
+  var modVersion = null;
   function getModVersion() {
-    return body2.querySelector(modVersionSelector).innerText;
+    if (!modVersion) {
+      modVersion = body2.querySelector(modVersionSelector).innerText;
+    }
+    return modVersion;
+  }
+  var modVersionWithDate = null;
+  function getModVersionWithDate() {
+    if (!modVersionWithDate) {
+      const fileInfoDiv = document.getElementById("fileinfo");
+      const dateTimeElement = fileInfoDiv.querySelector("div.timestamp:nth-of-type(1)>time");
+      const date = new Date(Date.parse(dateTimeElement.dateTime));
+      modVersionWithDate = `${getModVersion()}(${date.getFullYear().toString().substring(2)}.${date.getMonth() + 1}.${date.getDate()})`;
+    }
+    return modVersionWithDate;
   }
   function removeFeature(modInfoContainer2) {
     const featureDiv = modInfoContainer2.querySelector("#feature");
@@ -323,18 +473,19 @@
   }
 
   // ../ui.ts
-  var uiRoot = null;
-  function createUIRootElement() {
-    const sylin527UiContainer = "#sylin527UiContainer";
-    let entryElem = document.querySelector(sylin527UiContainer);
-    if (entryElem === null) {
-      entryElem = document.createElement("div");
-      entryElem.setAttribute("id", "sylin527UiContainer");
+  var actionContainer = null;
+  function createActionContainer() {
+    const containerId = "sylin527ActionContainer";
+    let container = document.getElementById(containerId);
+    if (null === container) {
+      container = document.createElement("div");
+      container.setAttribute("id", containerId);
       const newStyle = document.createElement("style");
       document.head.appendChild(newStyle);
       const sheet = newStyle.sheet;
-      let ruleIndex = sheet.insertRule(`
-      #sylin527UiContainer {
+      let ruleIndex = sheet.insertRule(
+        `
+      #${containerId} {
         display: block;
         position: fixed;
         right: 5px;
@@ -345,8 +496,10 @@
         background: transparent;
         z-index: 999;
       }
-      `);
-      sheet.insertRule(`#sylin527UiContainer > a, #sylin527UiContainer > button {
+      `
+      );
+      sheet.insertRule(
+        `#${containerId} > a, #${containerId} > button {
         display: block;
         padding: 8px;
         cursor: pointer;
@@ -357,17 +510,19 @@
         float: right;
         margin-top: 5px;
       }
-      `, ++ruleIndex);
+      `,
+        ++ruleIndex
+      );
     }
-    entryElem.style.zIndex = "999";
-    document.body.append(entryElem);
-    uiRoot = entryElem;
-    return entryElem;
+    container.style.zIndex = "999";
+    document.body.append(container);
+    actionContainer = container;
+    return actionContainer;
   }
-  function getUiRootElement() {
-    if (uiRoot === null)
-      uiRoot = createUIRootElement();
-    return uiRoot;
+  function getActionContainer() {
+    if (actionContainer === null)
+      actionContainer = createActionContainer();
+    return actionContainer;
   }
   var hideSylin527Ui = function() {
     const roots = document.querySelectorAll("div[id^=sylin527]");
@@ -376,14 +531,14 @@
     }
   };
 
-  // ../files_tab/files_tab_actions.ts
+  // ../files_tab_actions.ts
   var createEntryElement = function() {
     const button = document.createElement("button");
     button.setAttribute("id", "simplifyFilesTab");
     button.innerText = "Simplify Files Tab";
     return button;
   };
-  var oldTab = getCurrentTab();
+  var oldTab = "";
   function checkTab(entryElement) {
     const style = entryElement.style;
     function checkTabInner(currentTab) {
@@ -393,6 +548,7 @@
         style.display = "none";
       }
     }
+    oldTab = getCurrentTab();
     checkTabInner(oldTab);
     clickModTabs((newTab) => {
       if (oldTab !== newTab) {
@@ -402,9 +558,9 @@
     });
   }
   var simplifyFilesTab = function() {
-    const uiRoot2 = getUiRootElement();
+    const uiRoot = getActionContainer();
     const entryElem = createEntryElement();
-    uiRoot2.appendChild(entryElem);
+    uiRoot.appendChild(entryElem);
     entryElem.addEventListener("click", () => {
       removePremiumBanner();
       const modFilesElement = getModFilesElement();
@@ -417,29 +573,35 @@
     checkTab(entryElem);
   };
 
-  // ../forum_tab/forum_tab.ts
+  // ../forum_tab.ts
   function isForumTab(tab) {
     return tab === "forum";
   }
   function simplify() {
     document.body.querySelector("#tab-modtopics > span")?.remove();
-    const container = document.getElementById("comment-container");
+    const container = document.getElementById(
+      "comment-container"
+    );
     container.querySelector("div.head-nav")?.remove();
     container.querySelector("div.bottom-nav")?.remove();
-    const authorComments = container.querySelectorAll("ol>li.comment-author");
+    const authorComments = container.querySelectorAll(
+      "ol>li.comment-author"
+    );
     for (let i = 0; i < authorComments.length; i++) {
       showSpoilers(authorComments[i]);
       replaceYoutubeVideosToAnchor(authorComments[i]);
       replaceThumbnailUrlsToImageUrls(authorComments[i]);
     }
-    const nonAuthorComments = container.querySelectorAll("ol>li:not(.comment-author)");
+    const nonAuthorComments = container.querySelectorAll(
+      "ol>li:not(.comment-author)"
+    );
     for (let i = 0; i < nonAuthorComments.length; i++) {
       nonAuthorComments[i].remove();
     }
   }
 
-  // ../forum_tab/forum_tab_actions.ts
-  var oldTab2 = getCurrentTab();
+  // ../forum_tab_actions.ts
+  var oldTab2 = "";
   var createEntryElement2 = function() {
     const entryElemId = "simplifyForumTab";
     const button = document.createElement("button");
@@ -456,6 +618,7 @@
         style.display = "none";
       }
     }
+    oldTab2 = getCurrentTab();
     checkTabInner(oldTab2);
     clickModTabs((newTab) => {
       if (oldTab2 !== newTab) {
@@ -465,9 +628,9 @@
     });
   }
   var simplifyForumTab = function() {
-    const uiRoot2 = getUiRootElement();
+    const uiRoot = getActionContainer();
     const entryElem = createEntryElement2();
-    uiRoot2.appendChild(entryElem);
+    uiRoot.appendChild(entryElem);
     entryElem.addEventListener("click", () => {
       simplify();
       hideSylin527Ui();
@@ -502,15 +665,19 @@
   }
   function generateImgElements(gallery) {
     const imgElements = [];
-    for (let i = 0; i < gallery.length; i += 2) {
-      imgElements.push(`<img alt="${gallery[i + 1]}" title="${gallery[i + 1]}" src="${gallery[i]}"  />`);
+    const { descriptions, urls } = gallery;
+    for (let i = 0; i < descriptions.length; i++) {
+      imgElements.push(
+        `<img alt="${descriptions[i]}" title="${descriptions[i]}" src="${urls[i]}"  />`
+      );
     }
     return imgElements;
   }
   function generate({
     title: title2,
     style = getDefaultStyle(),
-    gallery
+    descriptions,
+    urls
   }) {
     const htmlParts = [];
     const encoding = '<meta charset="UTF-8">';
@@ -519,7 +686,7 @@
     htmlParts.push(titleElem);
     const styleElem = `<style>${style}</style>`;
     htmlParts.push(styleElem);
-    const imgElements = generateImgElements(gallery);
+    const imgElements = generateImgElements({ descriptions, urls });
     htmlParts.push(...imgElements);
     return htmlParts.join("\n");
   }
@@ -528,32 +695,39 @@
   var { body: body3 } = document;
   function generateGallery() {
     const liArrayLike = body3.querySelectorAll("#sidebargallery>ul.thumbgallery>li.thumb");
-    const gallery = [];
+    const descriptions = [];
+    const urls = [];
     for (let i = 0; i < liArrayLike.length; i++) {
       const liElem = liArrayLike[i];
       const dataSrc = liElem.getAttribute("data-src");
       const innerImgElem = liElem.querySelector("figure>a>img");
-      if (innerImgElem !== null) {
+      if (null !== innerImgElem) {
         const titleAttr = innerImgElem.getAttribute("title");
-        if (titleAttr !== null) {
-          gallery.push(titleAttr);
+        if (null !== titleAttr) {
+          descriptions.push(titleAttr);
         } else {
-          gallery.push("");
+          descriptions.push("");
         }
       }
-      if (dataSrc !== null) {
-        gallery.push(dataSrc);
+      if (null !== dataSrc) {
+        urls.push(dataSrc);
       }
     }
-    return gallery;
+    return {
+      descriptions,
+      urls
+    };
   }
   var generateGalleryHtmlInner = function(modGallery) {
     const titleText = `_gallery_of_${getModName()}_${getModVersion()}`;
-    const len = modGallery.length;
-    for (let i = 0; i < len; i += 2) {
-      modGallery[i] = `${(i % 2 + 1).toString().padStart(len.toString().length, "0")}_${replaceIllegalCharToMark(modGallery[i])}`;
+    const { descriptions, urls } = modGallery;
+    const len = descriptions.length;
+    for (let i = 0; i < len; i++) {
+      descriptions[i] = `${(i + 1).toString().padStart(len.toString().length, "0")}_${replaceIllegalCharToMark(
+        descriptions[i]
+      )}`;
     }
-    return generate({ title: titleText, gallery: modGallery });
+    return generate({ title: titleText, descriptions, urls });
   };
   var createEntryElement3 = function() {
     const anchor = document.createElement("a");
@@ -561,16 +735,16 @@
     return anchor;
   };
   var generateGalleryHtml = function() {
-    const uiRoot2 = getUiRootElement();
+    const uiRoot = getActionContainer();
     const entryElem = createEntryElement3();
-    uiRoot2.appendChild(entryElem);
+    uiRoot.appendChild(entryElem);
     const htmlContent = generateGalleryHtmlInner(generateGallery());
-    if (htmlContent !== null) {
+    if (null !== htmlContent) {
       linkContent(entryElem, htmlContent);
     }
   };
 
-  // ../description_tab/description_tab.ts
+  // ../description_tab.ts
   var templateDescriptionContainerSelector = "div.container.tab-description";
   var aboutThisModRelativeSelector = "h2#description_tab_h2";
   var downloadedOrNotRelativeSelector = "div.modhistory";
@@ -587,13 +761,17 @@
   async function getTemplateDescriptionContainer(tabContentContainer2, delayMs = 100) {
     while (!templateDescriptionContainer) {
       await delay(delayMs);
-      templateDescriptionContainer = tabContentContainer2.querySelector(templateDescriptionContainerSelector);
+      templateDescriptionContainer = tabContentContainer2.querySelector(
+        templateDescriptionContainerSelector
+      );
     }
     return templateDescriptionContainer;
   }
   function getAuthorDefinedDescriptionContainer(tabContentContainer2) {
     if (!authorDefinedDescriptionContainer) {
-      authorDefinedDescriptionContainer = tabContentContainer2.querySelector(authorDefinedDescriptionContainerSelector);
+      authorDefinedDescriptionContainer = tabContentContainer2.querySelector(
+        authorDefinedDescriptionContainerSelector
+      );
     }
     return authorDefinedDescriptionContainer;
   }
@@ -627,8 +805,9 @@
     const newStyle = document.createElement("style");
     document.head.appendChild(newStyle);
     const sheet = newStyle.sheet;
+    const accordionToggle = "sylin527_show_accordion_toggle";
     let ruleIndex = sheet.insertRule(`
-    input.sylin527_show_toggle {
+    input.${accordionToggle} {
       cursor: pointer;
       display: block;
       height: 43.5px;
@@ -639,18 +818,21 @@
       opacity: 0;
     }
   `);
-    sheet.insertRule(`
-    input.sylin527_show_toggle:checked ~ dd{
+    sheet.insertRule(
+      `
+    input.${accordionToggle}:checked ~ dd{
       display: none;
     }
-  `, ++ruleIndex);
+  `,
+      ++ruleIndex
+    );
     for (let i = 0; i < dts.length; i++) {
       dts[i].style.background = "#2d2d2d";
       dds[i].style.display = "block";
       dds[i].removeAttribute("style");
       const newPar = document.createElement("div");
       const toggle = document.createElement("input");
-      toggle.setAttribute("class", "sylin527_show_toggle");
+      toggle.setAttribute("class", accordionToggle);
       toggle.setAttribute("type", "checkbox");
       dds[i].parentElement.insertBefore(toggle, dds[i]);
       newPar.append(dts[i], toggle, dds[i]);
@@ -658,11 +840,11 @@
     }
   }
 
-  // ../mod_page/mod_page_actions.ts
-  var createCopyUiRoot = function() {
-    const rootUiId = "sylin527CopyRoot";
+  // ../mod_page_actions.ts
+  var createCopyContainer = function() {
+    const containerId = "sylin527CopyContainer";
     const rootDiv = document.createElement("div");
-    rootDiv.setAttribute("id", rootUiId);
+    rootDiv.setAttribute("id", containerId);
     const button = document.createElement("button");
     button.innerText = "Copy";
     const message = document.createElement("span");
@@ -681,8 +863,9 @@
     const newStyle = document.createElement("style");
     document.head.appendChild(newStyle);
     const sheet = newStyle.sheet;
-    let ruleIndex = sheet.insertRule(`
-    #${rootUiId} {
+    let ruleIndex = sheet.insertRule(
+      `
+    #${containerId} {
       margin-left: ${marginLeft};
       font-family: 'Roboto',sans-serif;
       font-size: 14px;
@@ -690,9 +873,11 @@
       position: absolute;
       margin-top: -51px;
     }
-    `);
-    sheet.insertRule(`
-    #${rootUiId} > button {
+    `
+    );
+    sheet.insertRule(
+      `
+    #${containerId} > button {
       background-color: #337ab7;
       border: none;
       border-radius: 3px;
@@ -702,9 +887,12 @@
       font-weight: 400;
       border-color: #2e6da4;
     }
-    `, ++ruleIndex);
-    sheet.insertRule(`
-    #${rootUiId} > span {
+    `,
+      ++ruleIndex
+    );
+    sheet.insertRule(
+      `
+    #${containerId} > span {
       background-color: rgba(51, 51, 51, 0.5);
       color: hotpink;
       padding: 8px;
@@ -712,28 +900,51 @@
       margin-left: 1rem;
       display: none;
     }
-    `, ++ruleIndex);
+    `,
+      ++ruleIndex
+    );
     return rootDiv;
   };
-  var copyModNameAndVersion = function() {
-    const uiRoot2 = createCopyUiRoot();
-    let modNameAndVersion = null;
-    const button = uiRoot2.querySelector("button");
-    const message = uiRoot2.querySelector("span");
-    const getCopyText = function() {
-      if (modNameAndVersion === null) {
-        modNameAndVersion = `${getModName()} ${getModVersion()}`;
+  var title = document.head.querySelector("title");
+  var briefOverview2 = null;
+  var oldTab3 = "";
+  async function tweakTitleInner(currentTab) {
+    if (isDescriptionTab(currentTab)) {
+      if (!briefOverview2) {
+        const tcc = getTabContentContainer();
+        const tdc = await getTemplateDescriptionContainer(tcc);
+        briefOverview2 = getBriefOverview(tdc).trim();
       }
-      return modNameAndVersion;
-    };
-    button.addEventListener("click", () => {
-      navigator.clipboard.writeText(getCopyText()).then(() => {
-        message.style.display = "inline";
-        setTimeout(() => message.style.display = "none", 1e3);
-      }, () => console.log("%c[Error] Copy failed.", "color: red"));
+      briefOverview2.replaceAll(/\r\n|\n/g, " ");
+      title.innerText = `${getModName()} ${getModVersionWithDate()}: ${briefOverview2}`;
+    } else {
+      title.innerText = `${getModName()} ${getModVersionWithDate()} tab=${currentTab}`;
+    }
+  }
+  var tweakTitle = function() {
+    oldTab3 = getCurrentTab();
+    tweakTitleInner(oldTab3);
+    clickModTabs((newTab) => {
+      if (oldTab3 !== newTab) {
+        oldTab3 = newTab;
+        tweakTitleInner(newTab);
+      }
     });
   };
-  var oldTab3 = getCurrentTab();
+  var copyModNameAndVersion = function() {
+    const uiRoot = createCopyContainer();
+    const button = uiRoot.querySelector("button");
+    const message = uiRoot.querySelector("span");
+    button.addEventListener("click", () => {
+      navigator.clipboard.writeText(`${getModName()} ${getModVersionWithDate()}`).then(
+        () => {
+          message.style.display = "inline";
+          setTimeout(() => message.style.display = "none", 1e3);
+        },
+        () => console.log("%c[Error] Copy failed.", "color: red")
+      );
+    });
+  };
   function checkTab3(entryElement) {
     const style = entryElement.style;
     function checkTabInner(currentTab) {
@@ -743,6 +954,7 @@
         style.display = "none";
       }
     }
+    oldTab3 = getCurrentTab();
     checkTabInner(oldTab3);
     clickModTabs((newTab) => {
       if (oldTab3 !== newTab) {
@@ -767,10 +979,6 @@
     replaceYoutubeVideosToAnchor(addContainer);
     replaceThumbnailUrlsToImageUrls(addContainer);
   }
-  function tweakTitleText() {
-    const title2 = document.querySelector("title");
-    title2.innerText = `${getModName()} ${getModVersion()}`;
-  }
   function createEntryElement4() {
     const entryElemId = "simplifyModPage";
     const button = document.createElement("button");
@@ -779,9 +987,9 @@
     return button;
   }
   function simplifyModPage() {
-    const uiRoot2 = getUiRootElement();
+    const uiRoot = getActionContainer();
     const entryElem = createEntryElement4();
-    uiRoot2.appendChild(entryElem);
+    uiRoot.appendChild(entryElem);
     entryElem.addEventListener("click", async () => {
       simplifyModInfo();
       const tabContentContainer2 = getTabContentContainer();
@@ -789,43 +997,14 @@
       simplifyTemplateDescription(tdContainer);
       const addContainer = getAuthorDefinedDescriptionContainer(tabContentContainer2);
       simplifyAuthorDefinedDescription(addContainer);
-      tweakTitleText();
+      title.innerText = `${getModName()} ${getModVersionWithDate()}`;
       setSectionAsTopElement();
       hideSylin527Ui();
     });
     checkTab3(entryElem);
   }
 
-  // ../page_title/page_title_actions.ts
-  var title = document.head.querySelector("title");
-  var modName = getModName();
-  var modVersion = getModVersion();
-  var briefOverview2 = null;
-  var oldTab4 = getCurrentTab();
-  async function tweakTitleInner(currentTab) {
-    if (isDescriptionTab(currentTab)) {
-      if (!briefOverview2) {
-        const tcc = getTabContentContainer();
-        const tdc = await getTemplateDescriptionContainer(tcc);
-        briefOverview2 = getBriefOverview(tdc).trim();
-      }
-      briefOverview2.replaceAll(/\r\n|\n/g, " ");
-      title.innerText = `${modName} ${modVersion}: ${briefOverview2}`;
-    } else {
-      title.innerText = `${modName} ${modVersion} tab=${currentTab}`;
-    }
-  }
-  var tweakTitle = function() {
-    tweakTitleInner(oldTab4);
-    clickModTabs((newTab) => {
-      if (oldTab4 !== newTab) {
-        oldTab4 = newTab;
-        tweakTitleInner(newTab);
-      }
-    });
-  };
-
-  // ../posts_tab/posts_tab.ts
+  // ../posts_tab.ts
   function isPostsTab(tab) {
     return tab === "posts";
   }
@@ -833,9 +1012,9 @@
     const container = document.getElementById("comment-container");
     container.querySelector("div.head-nav")?.remove();
     container.querySelector("div.bottom-nav")?.remove();
+    showSpoilers(container);
     const stickyLis = container.querySelectorAll("ol>li.comment-sticky");
     for (let i = 0; i < stickyLis.length; i++) {
-      showSpoilers(stickyLis[i]);
       replaceYoutubeVideosToAnchor(stickyLis[i]);
       replaceThumbnailUrlsToImageUrls(stickyLis[i]);
     }
@@ -845,8 +1024,8 @@
     }
   }
 
-  // ../posts_tab/posts_tab_actions.ts
-  var oldTab5 = getCurrentTab();
+  // ../posts_tab_actions.ts
+  var oldTab4 = "";
   var createEntryElement5 = function() {
     const button = document.createElement("button");
     button.setAttribute("id", "simplifyPostsTab");
@@ -862,18 +1041,19 @@
         style.display = "none";
       }
     }
-    checkTabInner(oldTab5);
+    oldTab4 = getCurrentTab();
+    checkTabInner(oldTab4);
     clickModTabs((newTab) => {
-      if (oldTab5 !== newTab) {
-        oldTab5 = newTab;
+      if (oldTab4 !== newTab) {
+        oldTab4 = newTab;
         checkTabInner(newTab);
       }
     });
   }
   var simplifyPostsTab = function() {
-    const uiRoot2 = getUiRootElement();
+    const uiRoot = getActionContainer();
     const entryElem = createEntryElement5();
-    uiRoot2.appendChild(entryElem);
+    uiRoot.appendChild(entryElem);
     entryElem.addEventListener("click", () => {
       simplify2();
       hideSylin527Ui();
@@ -882,22 +1062,63 @@
     checkTab4(entryElem);
   };
 
+  // ../article_page_actions.ts
+  var { head: head2 } = document;
+  var articlePageUrlRegexp = /^((https|http):\/\/(www.)?nexusmods.com\/[a-z0-9]+\/articles\/[0-9]+)/;
+  function isArticlePageUrl(url) {
+    return articlePageUrlRegexp.test(url);
+  }
+  function simplify3() {
+    const section = document.getElementById("section");
+    const content = section.querySelector("div.container");
+    showSpoilers(content);
+    replaceYoutubeVideosToAnchor(content);
+    replaceThumbnailUrlsToImageUrls(content);
+    const pageTitle = document.getElementById("pagetitle");
+    const titleH1 = pageTitle.querySelector("h1");
+    head2.querySelector("title").innerText = titleH1.innerText;
+    pageTitle.querySelector("ul.modactions")?.remove();
+    document.getElementById("comment-container")?.remove();
+    setSectionAsTopElement();
+  }
+  var createEntryElement6 = function() {
+    const button = document.createElement("button");
+    button.setAttribute("id", "simplifyArticlePage");
+    button.innerText = "Simplify Article Page";
+    return button;
+  };
+  function simplifyArticlePage() {
+    const uiRoot = getActionContainer();
+    const entryElem = createEntryElement6();
+    uiRoot.appendChild(entryElem);
+    entryElem.addEventListener("click", () => {
+      simplify3();
+      hideSylin527Ui();
+    });
+  }
+
   // mod_documentation_utility.ts
   function modDocumentationUtility() {
-    tweakTitle();
-    if (isSylin527) {
-      generateGalleryHtml();
+    const href = location.href;
+    if (isModPageUrl(href)) {
+      tweakTitle();
+      if (isSylin527) {
+        generateGalleryHtml();
+      }
+      copyModNameAndVersion();
+      simplifyModPage();
+      simplifyFilesTab();
+      simplifyPostsTab();
+      simplifyForumTab();
+    } else if (isArticlePageUrl(href)) {
+      simplifyArticlePage();
     }
-    copyModNameAndVersion();
-    simplifyModPage();
-    simplifyFilesTab();
-    simplifyPostsTab();
-    simplifyForumTab();
   }
   function main() {
     modDocumentationUtility();
-    const scriptInfo = "Load userscript: [sylin527] nexusmods.com Mod Documentation Utility";
+    const scriptInfo = "Load userscript: sylin527's Mod Documentations Utility";
     console.log("%c [Info] " + scriptInfo, "color: green");
+    console.log("%c [Info] URL: " + location.href, "color: green");
   }
   main();
 })();

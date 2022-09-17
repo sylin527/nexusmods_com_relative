@@ -1,9 +1,19 @@
-import { replaceThumbnailUrlsToImageUrls, replaceYoutubeVideosToAnchor, setSectionAsTopElement } from "../shared.ts";
-import { showSpoilers } from "../shared.ts";
-import { getUiRootElement, hideSylin527Ui } from "../ui.ts";
-const { head, body } = document;
+import {
+  showSpoilers,
+  replaceThumbnailUrlsToImageUrls,
+  replaceYoutubeVideosToAnchor,
+  setSectionAsTopElement,
+} from "./shared.ts";
+import { getActionContainer, hideSylin527Ui } from "./ui.ts";
+const { head } = document;
 
-function simplifyArticlePage() {
+export const articlePageUrlRegexp = /^((https|http):\/\/(www.)?nexusmods.com\/[a-z0-9]+\/articles\/[0-9]+)/;
+
+export function isArticlePageUrl(url: string) {
+  return articlePageUrlRegexp.test(url);
+}
+
+function simplify() {
   const section = document.getElementById("section") as HTMLElement;
   const content = section.querySelector("div.container") as HTMLDivElement;
   showSpoilers(content);
@@ -27,20 +37,12 @@ const createEntryElement = function (): HTMLButtonElement {
   return button;
 };
 
-function bindEvent() {
-  const uiRoot = getUiRootElement();
+export function simplifyArticlePage() {
+  const uiRoot = getActionContainer();
   const entryElem = createEntryElement();
   uiRoot.appendChild(entryElem);
   entryElem.addEventListener("click", () => {
-    simplifyArticlePage();
+    simplify();
     hideSylin527Ui();
   });
 }
-
-function main() {
-  bindEvent();
-  const scriptInfo = "Load userscript: [sylin527] nexusmods.com Simplify Article Page for Saving";
-  console.log("%c [Info] " + scriptInfo, "color: green");
-}
-
-main();

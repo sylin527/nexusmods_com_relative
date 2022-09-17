@@ -14,12 +14,8 @@ import {
   simplifyFileDds,
   simplifyFileDts,
 } from "./files_tab.ts";
-import {
-  clickModTabs,
-  getCurrentTab,
-  setTabsContainerAsTopElement,
-} from "./tabs_shared.ts";
-import { getUiRootElement, hideSylin527Ui } from "./ui.ts";
+import { clickModTabs, getCurrentTab, setTabsContainerAsTopElement } from "./tabs_shared.ts";
+import { getActionContainer, hideSylin527Ui } from "./ui.ts";
 
 const createEntryElement = function (): HTMLButtonElement {
   const button = document.createElement("button");
@@ -27,7 +23,7 @@ const createEntryElement = function (): HTMLButtonElement {
   button.innerText = "Simplify Files Tab";
   return button;
 };
-let oldTab = getCurrentTab();
+let oldTab = "";
 function checkTab(entryElement: HTMLElement) {
   const style = entryElement.style;
   function checkTabInner(currentTab: string) {
@@ -37,6 +33,7 @@ function checkTab(entryElement: HTMLElement) {
       style.display = "none";
     }
   }
+  oldTab = getCurrentTab();
   checkTabInner(oldTab);
 
   clickModTabs((newTab) => {
@@ -48,7 +45,7 @@ function checkTab(entryElement: HTMLElement) {
 }
 
 export const simplifyFilesTab = function () {
-  const uiRoot = getUiRootElement();
+  const uiRoot = getActionContainer();
   const entryElem = createEntryElement();
   uiRoot.appendChild(entryElem);
   entryElem.addEventListener("click", () => {

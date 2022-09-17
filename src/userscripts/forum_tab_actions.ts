@@ -1,15 +1,10 @@
-import {
-  clickModTabs,
-  getCurrentTab,
-  setTabsContainerAsTopElement,
-} from "./tabs_shared.ts";
-import { getUiRootElement, hideSylin527Ui } from "./ui.ts";
+import { clickModTabs, getCurrentTab, setTabsContainerAsTopElement } from "./tabs_shared.ts";
+import { getActionContainer, hideSylin527Ui } from "./ui.ts";
 import { isForumTab, simplify } from "./forum_tab.ts";
 
-let oldTab = getCurrentTab();
+let oldTab = "";
 
-const createEntryElement = function (
-): HTMLButtonElement {
+const createEntryElement = function (): HTMLButtonElement {
   const entryElemId = "simplifyForumTab";
   const button = document.createElement("button");
   button.setAttribute("id", entryElemId);
@@ -26,6 +21,7 @@ function checkTab(entryElement: HTMLElement) {
       style.display = "none";
     }
   }
+  oldTab = getCurrentTab();
   checkTabInner(oldTab);
   clickModTabs((newTab) => {
     if (oldTab !== newTab) {
@@ -36,7 +32,7 @@ function checkTab(entryElement: HTMLElement) {
 }
 
 export const simplifyForumTab = function () {
-  const uiRoot = getUiRootElement();
+  const uiRoot = getActionContainer();
   const entryElem = createEntryElement();
   uiRoot.appendChild(entryElem);
   entryElem.addEventListener("click", () => {
@@ -46,5 +42,3 @@ export const simplifyForumTab = function () {
   });
   checkTab(entryElem);
 };
-
-

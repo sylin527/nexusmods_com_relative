@@ -1,4 +1,4 @@
-import { mainContentMaxWidth } from './shared.ts';
+import { mainContentMaxWidth } from "./shared.ts";
 const { body, head } = document;
 /**
  * 不描述 description, files, images 等 tab 的信息.
@@ -34,8 +34,7 @@ export const galleryContainerSelector = "div#sidebargallery";
  */
 export const galleryRelativeSelector = "ul.thumbgallery.gallery.clearfix";
 
-export const modVersionSelector =
-  "div#pagetitle>ul.stats.clearfix>li.stat-version>div.statitem>div.stat";
+export const modVersionSelector = "div#pagetitle>ul.stats.clearfix>li.stat-version>div.statitem>div.stat";
 
 /*
  <ul class="modactions">
@@ -117,38 +116,69 @@ export const backToTopSelector = "div#rj-back-to-top";
 
 export const footerSelector = "footer#rj-footer";
 
-export const modPageUrlRegexp =
-  /((https|http):\/\/)((www.)?nexusmods.com)\/\w+\/mods\/([0-9]+(\/)?(\?)?(tab=description)?)$/;
+export const modPageUrlRegexp = /^((https|http):\/\/(www.)?nexusmods.com\/[a-z0-9]+\/mods\/[0-9]+)/;
+
+export function isModPageUrl(url: string): boolean {
+  return modPageUrlRegexp.test(url);
+}
 
 let modInfoContainer: HTMLElement | null = null;
 
 export function getModInfoContainer() {
   if (!modInfoContainer) {
-    modInfoContainer = body.querySelector<HTMLElement>(
-      modInfoContainerSelector
-    ) as HTMLElement;
+    modInfoContainer = body.querySelector<HTMLElement>(modInfoContainerSelector) as HTMLElement;
   }
   return modInfoContainer;
 }
 
+// modName cache
+let modName: string | null = null;
+
 export function getModName(): string {
-  const meta = head.querySelector<HTMLMetaElement>(`meta[property="og:title"]`);
-  if (meta) return meta.getAttribute("content")!;
-  const ul = document.getElementById("breadcrumb") as HTMLUListElement;
-  const li = ul.querySelector("li:last-child") as HTMLLIElement;
-  return li.innerText;
+  if (!modName) {
+    const meta = head.querySelector<HTMLMetaElement>(`meta[property="og:title"]`);
+    if (meta) {
+      modName = meta.getAttribute("content")!;
+    } else {
+      const ul = document.getElementById("breadcrumb") as HTMLUListElement;
+      const li = ul.querySelector("li:last-child") as HTMLLIElement;
+      modName = li.innerText;
+    }
+  }
+  return modName;
 }
+
+// modVersion cache
+let modVersion: string | null = null;
 
 /**
  * Mod version can be empty string???
  */
 export function getModVersion(): string {
-  return body.querySelector<HTMLDivElement>(modVersionSelector)!.innerText;
+  if (!modVersion) {
+    modVersion = body.querySelector<HTMLDivElement>(modVersionSelector)!.innerText;
+  }
+  return modVersion;
+}
+
+// modVersion cache
+let modVersionWithDate: string | null = null;
+
+export function getModVersionWithDate(): string {
+  if (!modVersionWithDate) {
+    const fileInfoDiv = document.getElementById("fileinfo") as HTMLDivElement;
+    const dateTimeElement = fileInfoDiv.querySelector("div.timestamp:nth-of-type(1)>time") as HTMLTimeElement;
+    const date = new Date(Date.parse(dateTimeElement.dateTime));
+    modVersionWithDate = `${getModVersion()}(${date.getFullYear().toString().substring(2)}.${
+      date.getMonth() + 1
+    }.${date.getDate()})`;
+  }
+  return modVersionWithDate;
 }
 
 /**
  * Clean global background.
- * 覆盖 '::before' 的 background image 至, 无法减小 SingFileZ 保存文件的大小, 不建议使用
+ * 覆盖 '::before' 的 background image 至, 无法减小 SingFile 保存文件的大小, 没必要使用
  */
 export function clearBodyBackground(): void {
   // 仅可读
@@ -182,9 +212,7 @@ export function removeModActions(modInfoContainer: HTMLElement) {
 }
 
 export function removeModGallery(modInfoContainer: HTMLElement) {
-  modInfoContainer
-    .querySelector<HTMLDivElement>(galleryContainerSelector)
-    ?.remove();
+  modInfoContainer.querySelector<HTMLDivElement>(galleryContainerSelector)?.remove();
 }
 
 export function simplifyModInfo() {
@@ -196,9 +224,7 @@ export function simplifyModInfo() {
 
 export function setTabsContainerAsTopElement() {
   // 不删  <ul class="modtabs"></ul> 信息, 保留 mod url
-  const tabsContainer = body.querySelector(
-    tabsContainerSelector
-  ) as HTMLDivElement;
+  const tabsContainer = body.querySelector(tabsContainerSelector) as HTMLDivElement;
   // 后面有结构变化导致样式失效, 先修复
   const modtabs = tabsContainer.querySelector("ul.modtabs") as HTMLUListElement;
   modtabs.style.height = "45px";
@@ -210,10 +236,6 @@ export function setTabsContainerAsTopElement() {
   const tabsBackup = tabsContainer.cloneNode(true);
   body.innerHTML = "";
   body.appendChild(tabsBackup);
-}
-
-export function isModPage(url: string): boolean {
-  return modPageUrlRegexp.test(url);
 }
 
 let modTabs: HTMLUListElement | null = null;
@@ -230,9 +252,7 @@ export function getModTabs(): HTMLUListElement {
 // 统一转为小写
 export function getCurrentTab(): string {
   const modTabs = getModTabs();
-  const tabSpan = modTabs.querySelector(
-    "li a.selected span"
-  ) as HTMLSpanElement;
+  const tabSpan = modTabs.querySelector("li a.selected span") as HTMLSpanElement;
   return tabSpan.innerText.toLowerCase();
 }
 
@@ -247,9 +267,7 @@ export function clickModTabs(callback: (tab: string, e: Event) => any) {
     if (target instanceof HTMLAnchorElement) {
       tabSpan = target.querySelector("span:first-child") as HTMLSpanElement;
     } else {
-      tabSpan = target.parentElement!.querySelector(
-        "span:first-child"
-      ) as HTMLSpanElement;
+      tabSpan = target.parentElement!.querySelector("span:first-child") as HTMLSpanElement;
     }
     const newTab = tabSpan.innerText.toLowerCase();
     callback(newTab, e);
@@ -259,9 +277,7 @@ export function clickModTabs(callback: (tab: string, e: Event) => any) {
 let tabContentContainer: HTMLDivElement | null = null;
 export function getTabContentContainer() {
   if (!tabContentContainer) {
-    tabContentContainer = body.querySelector<HTMLDivElement>(
-      tabContentContainerSelector
-    ) as HTMLDivElement;
+    tabContentContainer = body.querySelector<HTMLDivElement>(tabContentContainerSelector) as HTMLDivElement;
   }
   return tabContentContainer;
 }

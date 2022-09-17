@@ -22,6 +22,6 @@ type %script_name%.meta.ts>>%script_name%.bundle.js
 : 因为 deno 1.22.2 的 deno bundle 仍会打包所有 enum, 换成 esbuild 了 
 : deno bundle %script_name%.ts>>%script_name%.bundle.js
 @echo on
-esbuild %script_name%.ts --bundle --tree-shaking>>%script_name%.bundle.js
+esbuild %script_name%.ts --bundle>>%script_name%.bundle.js
 pause
 

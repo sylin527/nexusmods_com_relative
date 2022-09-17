@@ -32,4 +32,4 @@ export const replaceIllegalCharToMark = function (entityName: string) {
   return entityName.replace(/(\?)|(\*)|(:)|(<)|(>)|(")|(\/)|(\\)|(\|)/g, (match) => illegalCharMarkMapping[match]);
 };
 
-export const isSylin527 = true;
+export const isSylin527 = false;

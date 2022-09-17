@@ -1,12 +1,8 @@
-import {
-  clickModTabs,
-  getCurrentTab,
-  setTabsContainerAsTopElement,
-} from "./tabs_shared.ts";
-import { getUiRootElement, hideSylin527Ui } from "./ui.ts";
+import { clickModTabs, getCurrentTab, setTabsContainerAsTopElement } from "./tabs_shared.ts";
+import { getActionContainer, hideSylin527Ui } from "./ui.ts";
 import { isPostsTab, simplify } from "./posts_tab.ts";
 
-let oldTab = getCurrentTab();
+let oldTab = "";
 
 const createEntryElement = function (): HTMLButtonElement {
   const button = document.createElement("button");
@@ -24,6 +20,7 @@ function checkTab(entryElement: HTMLElement) {
       style.display = "none";
     }
   }
+  oldTab = getCurrentTab();
   checkTabInner(oldTab);
   clickModTabs((newTab) => {
     if (oldTab !== newTab) {
@@ -34,7 +31,7 @@ function checkTab(entryElement: HTMLElement) {
 }
 
 export const simplifyPostsTab = function () {
-  const uiRoot = getUiRootElement();
+  const uiRoot = getActionContainer();
   const entryElem = createEntryElement();
   uiRoot.appendChild(entryElem);
   entryElem.addEventListener("click", () => {
@@ -44,15 +41,3 @@ export const simplifyPostsTab = function () {
   });
   checkTab(entryElem);
 };
-
-/**
- * entrypoint function
- */
-// function main() {
-//   simplifyPostsTab();
-//   const scriptInfo =
-//     "Load userscript: [sylin527] nexusmods.com Simplify Posts Tab";
-//   console.log("%c [Info] " + scriptInfo, "color: green");
-// }
-
-// main();

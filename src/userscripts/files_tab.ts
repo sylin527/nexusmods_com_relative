@@ -31,11 +31,7 @@
 
 */
 
-import {
-  replaceThumbnailUrlsToImageUrls,
-  replaceYoutubeVideosToAnchor,
-  showSpoilers,
-} from "./shared.ts";
+import { infoButtonBackground, replaceThumbnailUrlsToImageUrls, replaceYoutubeVideosToAnchor, showSpoilers, warningButtonBackground } from "./shared.ts";
 import { isSylin527 } from "./util.ts";
 
 /**
@@ -77,8 +73,7 @@ export const downloadedIconRelativeSelector = "div>i.material-icons";
  *
  * 可能没有
  */
-export const dateDownloadedRelativeSelector =
-  "div>div.file-download-stats>ul>li.stat-downloaded";
+export const dateDownloadedRelativeSelector = "div>div.file-download-stats>ul>li.stat-downloaded";
 
 /**
  * relative to fileDtRelativeSelector
@@ -95,8 +90,7 @@ export const fileDdRelativeSelector = "dl.accordion>dd";
  * relative to fileDdRelativeSelector
  * 如果没有任何文件描述, 就是这个空元素.
  */
-export const fileDescriptionRelativeSelector =
-  "div.tabbed-block:nth-of-type(1)";
+export const fileDescriptionRelativeSelector = "div.tabbed-block:nth-of-type(1)";
 
 /**
  * relative to fileDdRelativeSelector
@@ -111,8 +105,7 @@ export const previewFileRelativeSelector = "div.tabbed-block:last-child";
 // https://www.nexusmods.com/skyrimspecialedition/mods/14449?tab=files
 // https://www.nexusmods.com/skyrimspecialedition/mods/14449/?tab=files 可能是历史原因, 导致多了一个 '/'
 // 可能是历史原因, 甚至有时候切换 tab 时, url 不变...
-export const filesTabUrlRegexp =
-  /((https|http):\/\/)((www.)?nexusmods.com)\/\w+\/mods\/[0-9]+(\/)?(\?tab=files)$/;
+export const filesTabUrlRegexp = /((https|http):\/\/)((www.)?nexusmods.com)\/\w+\/mods\/[0-9]+(\/)?(\?tab=files)$/;
 
 export function isFilesTab(tab: string): boolean {
   return tab === "files";
@@ -132,9 +125,7 @@ export function removePremiumBanner() {
 }
 
 export function removeAllSortBys(modFilesElem: HTMLDivElement) {
-  const arrayLike = modFilesElem.querySelectorAll<HTMLDivElement>(
-    sortByRelativeSelector
-  );
+  const arrayLike = modFilesElem.querySelectorAll<HTMLDivElement>(sortByRelativeSelector);
   for (let i = 0; i < arrayLike.length; i++) {
     arrayLike[i].remove();
   }
@@ -143,9 +134,7 @@ export function removeAllSortBys(modFilesElem: HTMLDivElement) {
 // Simplify File Info
 export function simplifyFileDts(modFilesElem: HTMLDivElement) {
   // <dt>
-  const dts = modFilesElem.querySelectorAll<HTMLElement>(
-    fileDtRelativeSelector
-  );
+  const dts = modFilesElem.querySelectorAll<HTMLElement>(fileDtRelativeSelector);
   for (let i = 0; i < dts.length; i++) {
     // 移除这个影响感官
     // dts[i].querySelector(securityIconRelativeSelector)?.remove();
@@ -212,7 +201,7 @@ function addShowRealFilenameToggle(modFilesElem: HTMLDivElement) {
     i.sylin527_show_text {
       font-style: normal;
       font-size: 18px;
-      background-color: #8197ec;
+      background-color: ${infoButtonBackground};
       text-align: center;
       line-height: 40px;
       border-radius: 5px;
@@ -226,6 +215,14 @@ function addShowRealFilenameToggle(modFilesElem: HTMLDivElement) {
     `
     input.sylin527_show_toggle ~ i.sylin527_show_text::after {
       content: attr(unchecked_text);
+    }
+    `,
+    ++ruleIndex
+  );
+  sheet.insertRule(
+    `
+    input.sylin527_show_toggle:checked ~ i.sylin527_show_text {
+      background-color: ${warningButtonBackground};
     }
     `,
     ++ruleIndex
@@ -251,10 +248,9 @@ function addShowRealFilenameToggle(modFilesElem: HTMLDivElement) {
 
 // Simplify File Description
 export function simplifyFileDds(modFilesElem: HTMLDivElement) {
+  showSpoilers(modFilesElem);
   // <dd>
-  const dds = modFilesElem.querySelectorAll<HTMLElement>(
-    fileDdRelativeSelector
-  );
+  const dds = modFilesElem.querySelectorAll<HTMLElement>(fileDdRelativeSelector);
 
   const realClass = "sylin527_real_filename";
 
@@ -275,24 +271,15 @@ export function simplifyFileDds(modFilesElem: HTMLDivElement) {
   for (let i = 0; i < dds.length; i++) {
     const fd = dds[i].querySelector<HTMLDivElement>("div.files-description");
     if (fd) {
-      showSpoilers(fd);
       replaceYoutubeVideosToAnchor(fd);
       replaceThumbnailUrlsToImageUrls(fd);
     }
-    const previewFileElem = dds[i].querySelector<HTMLDivElement>(
-      previewFileRelativeSelector
-    );
-    const realFilename = previewFileElem
-      ?.querySelector("a")
-      ?.getAttribute("data-url");
-    const fileDescElem = dds[i].querySelector<HTMLParagraphElement>(
-      fileDescriptionRelativeSelector
-    );
+    const previewFileElem = dds[i].querySelector<HTMLDivElement>(previewFileRelativeSelector);
+    const realFilename = previewFileElem?.querySelector("a")?.getAttribute("data-url");
+    const fileDescElem = dds[i].querySelector<HTMLParagraphElement>(fileDescriptionRelativeSelector);
 
     // Remove all download buttons
-    const downContainer = dds[i].querySelector<HTMLDivElement>(
-      downloadButtonsContainerRelativeSelector
-    );
+    const downContainer = dds[i].querySelector<HTMLDivElement>(downloadButtonsContainerRelativeSelector);
 
     let fileUrl = "";
     if (downContainer) {
@@ -304,9 +291,7 @@ export function simplifyFileDds(modFilesElem: HTMLDivElement) {
         </a>
       </li>
        */
-      const fileUrlAnchor = downContainer.querySelector(
-        "ul>li:last-child>a"
-      ) as HTMLAnchorElement;
+      const fileUrlAnchor = downContainer.querySelector("ul>li:last-child>a") as HTMLAnchorElement;
       fileUrl = fileUrlAnchor.href;
       downContainer.remove();
     }
