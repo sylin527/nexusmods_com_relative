@@ -7,9 +7,9 @@
 // @icon        https://www.nexusmods.com/favicon.ico
 // @grant       none
 // @license     GPLv3
-// @version     0.1.0.beta.2022.9.17
+// @version     0.1.1.beta.2022.9.17
 // @author      sylin527
-// @description Help to save the mod documentations to local disk. Simplify mod page, files tab, posts tab, forum tab, article page, show requirements, changelogs, file descriptions and spoilers, replace thumbnails to original, replace embedded YouTube videos to links, remove unnecessary contents. After saving those pages by SingleFile, you can show/hide requirements, changelogs, spoilers, real file names downloaded, etc.
+// @description github.com/sylin527/nexusmods_com_relative. Help to save the mod documentations to local disk. Simplify mod page, files tab, posts tab, forum tab, article page, show requirements, changelogs, file descriptions and spoilers, replace thumbnails to original, replace embedded YouTube videos to links, remove unnecessary contents. After saving those pages by SingleFile, you can show/hide requirements, changelogs, spoilers, real file names downloaded, etc.
 // ==/UserScript==
 (() => {
   // ../shared.ts
@@ -907,7 +907,7 @@
   };
   var title = document.head.querySelector("title");
   var briefOverview2 = null;
-  var oldTab3 = "";
+  var oldTabForTitle = "";
   async function tweakTitleInner(currentTab) {
     if (isDescriptionTab(currentTab)) {
       if (!briefOverview2) {
@@ -921,16 +921,16 @@
       title.innerText = `${getModName()} ${getModVersionWithDate()} tab=${currentTab}`;
     }
   }
-  var tweakTitle = function() {
-    oldTab3 = getCurrentTab();
-    tweakTitleInner(oldTab3);
+  function tweakTitle() {
+    oldTabForTitle = getCurrentTab();
+    tweakTitleInner(oldTabForTitle);
     clickModTabs((newTab) => {
-      if (oldTab3 !== newTab) {
-        oldTab3 = newTab;
+      if (oldTabForTitle !== newTab) {
+        oldTabForTitle = newTab;
         tweakTitleInner(newTab);
       }
     });
-  };
+  }
   var copyModNameAndVersion = function() {
     const uiRoot = createCopyContainer();
     const button = uiRoot.querySelector("button");
@@ -945,6 +945,7 @@
       );
     });
   };
+  var oldTab3 = "";
   function checkTab3(entryElement) {
     const style = entryElement.style;
     function checkTabInner(currentTab) {

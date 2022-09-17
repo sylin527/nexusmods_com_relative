@@ -125,7 +125,7 @@ let briefOverview: string | null = null;
   new RegExp(/Deno$/, 'ig').test('Deno, other strings') // false
 */
 
-let oldTab = "";
+let oldTabForTitle = "";
 
 async function tweakTitleInner(currentTab: string) {
   if (isDescriptionTab(currentTab)) {
@@ -143,16 +143,16 @@ async function tweakTitleInner(currentTab: string) {
   }
 }
 
-export const tweakTitle = function () {
-  oldTab = getCurrentTab();
-  tweakTitleInner(oldTab);
+export function tweakTitle() {
+  oldTabForTitle = getCurrentTab();
+  tweakTitleInner(oldTabForTitle);
   clickModTabs((newTab) => {
-    if (oldTab !== newTab) {
-      oldTab = newTab;
+    if (oldTabForTitle !== newTab) {
+      oldTabForTitle = newTab;
       tweakTitleInner(newTab);
     }
   });
-};
+}
 
 export const copyModNameAndVersion = function () {
   const uiRoot = createCopyContainer();
@@ -168,6 +168,8 @@ export const copyModNameAndVersion = function () {
     );
   });
 };
+
+let oldTab = "";
 
 /*
   User Script 的 include 指令实在太弱了.

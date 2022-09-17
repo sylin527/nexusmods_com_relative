@@ -4,7 +4,7 @@ Personal resources relative to nexusmods.com.
 
 Now just a UserScript: Mod Documentations Utility.
 
-## UserScript: Mod Documentations Utility
+## UserScript: sylin527's Mod Documentations Utility
 
 ### Brief Overview
 
@@ -24,9 +24,15 @@ After saving s those pages by SingleFile, you can show/hide requirements, change
 
 ### Installation
 
-Just support English.
+The locate of this UserScript is English.
 
-Go to [greasyfork.org](https://greasyfork.org/scripts/by-site/nexusmods.com?filter_locale=0), show all languages, then find.
+- **Method 1**
+
+  Install [sylin527's Mod Documentations Utility](https://greasyfork.org/en/scripts/451506-sylin527-s-mod-documentations-utility) from greasyfork.org.
+
+- **Method 2**
+
+  Go to [greasyfork.org](https://greasyfork.org/scripts/by-site/nexusmods.com?filter_locale=0) for *nexusmods.com*, show all languages, then find "**sylin527's Mod Documentations Utility**" and install.
 
 ### Tweak Page Title
 
