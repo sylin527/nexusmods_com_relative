@@ -144,7 +144,7 @@ Replace thumbnails to original, replace embedded YouTube videos to links.
 
 ## Changelogs
 
-### 0.1.2.2022.9.17
+### 0.1.2.2022.9.19
 
 - Fix the incorrect position of copy button when mod name is long (multiline).
 - Fix the removement of nested non-sticky comments of sticky comments in forum or posts tab. Now not remove.
