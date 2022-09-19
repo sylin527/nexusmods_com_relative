@@ -31,7 +31,13 @@
 
 */
 
-import { infoButtonBackground, replaceThumbnailUrlsToImageUrls, replaceYoutubeVideosToAnchor, showSpoilers, warningButtonBackground } from "./shared.ts";
+import {
+  infoButtonBackground,
+  replaceThumbnailUrlsToImageUrls,
+  replaceYoutubeVideosToAnchor,
+  showSpoilers,
+  warningButtonBackground,
+} from "./shared.ts";
 import { isSylin527 } from "./util.ts";
 
 /**
@@ -313,6 +319,8 @@ export function simplifyFileDds(modFilesElem: HTMLDivElement) {
         // 自用可以像下面这样写, 但为了是这个漏洞维持, 公开脚本不要这样搞
         realFilenameP.appendChild(a);
       } else {
+        // 稍微留点后门吧...
+        realFilenameP.setAttribute("file-url", fileUrl);
         realFilenameP.innerText = realFilename;
       }
     }

@@ -7,7 +7,7 @@
 // @icon        https://www.nexusmods.com/favicon.ico
 // @grant       none
 // @license     GPLv3
-// @version     0.1.1.beta.2022.9.17
+// @version     0.1.2.2022.9.19
 // @author      sylin527
 // @description github.com/sylin527/nexusmods_com_relative. Help to save the mod documentations to local disk. Simplify mod page, files tab, posts tab, forum tab, article page, show requirements, changelogs, file descriptions and spoilers, replace thumbnails to original, replace embedded YouTube videos to links, remove unnecessary contents. After saving those pages by SingleFile, you can show/hide requirements, changelogs, spoilers, real file names downloaded, etc.
 // ==/UserScript==
@@ -137,6 +137,7 @@
       const videoId = parts[parts.length - 1];
       const watchA = document.createElement("a");
       const watchUrl = `https://www.youtube.com/watch?v=${videoId}`;
+      watchA.style.display = "block";
       watchA.setAttribute("href", watchUrl);
       watchA.innerText = watchUrl;
       const parent = youtubeIframes[i].parentNode;
@@ -349,6 +350,7 @@
           a.innerText = realFilename;
           realFilenameP.appendChild(a);
         } else {
+          realFilenameP.setAttribute("file-url", fileUrl);
           realFilenameP.innerText = realFilename;
         }
       }
@@ -579,25 +581,21 @@
   }
   function simplify() {
     document.body.querySelector("#tab-modtopics > span")?.remove();
-    const container = document.getElementById(
-      "comment-container"
-    );
+    const container = document.getElementById("comment-container");
     container.querySelector("div.head-nav")?.remove();
     container.querySelector("div.bottom-nav")?.remove();
-    const authorComments = container.querySelectorAll(
-      "ol>li.comment-author"
-    );
+    const authorComments = container.querySelectorAll("ol>li.comment-author");
     for (let i = 0; i < authorComments.length; i++) {
-      showSpoilers(authorComments[i]);
       replaceYoutubeVideosToAnchor(authorComments[i]);
       replaceThumbnailUrlsToImageUrls(authorComments[i]);
     }
     const nonAuthorComments = container.querySelectorAll(
-      "ol>li:not(.comment-author)"
+      "div#comment-container>ol>li:not(.comment-author)"
     );
     for (let i = 0; i < nonAuthorComments.length; i++) {
       nonAuthorComments[i].remove();
     }
+    showSpoilers(container);
   }
 
   // ../forum_tab_actions.ts
@@ -843,35 +841,14 @@
   // ../mod_page_actions.ts
   var createCopyContainer = function() {
     const containerId = "sylin527CopyContainer";
-    const rootDiv = document.createElement("div");
-    rootDiv.setAttribute("id", containerId);
-    const button = document.createElement("button");
-    button.innerText = "Copy";
-    const message = document.createElement("span");
-    message.innerText = "Copied mod name and version";
-    rootDiv.append(button, message);
-    const pagetitle = document.getElementById("pagetitle");
-    const nameNextElem = pagetitle.querySelector("ul.stats");
-    pagetitle.insertBefore(rootDiv, nameNextElem);
-    const h1 = pagetitle.querySelector("h1:nth-of-type(1)");
-    h1.style.display = "inline-block";
-    const marginLeft = h1.clientWidth + 16 + "px";
-    self.addEventListener("load", () => {
-      rootDiv.style.marginLeft = h1.clientWidth + 16 + "px";
-    });
-    pagetitle.insertBefore(document.createElement("div"), rootDiv);
     const newStyle = document.createElement("style");
     document.head.appendChild(newStyle);
     const sheet = newStyle.sheet;
     let ruleIndex = sheet.insertRule(
       `
     #${containerId} {
-      margin-left: ${marginLeft};
       font-family: 'Roboto',sans-serif;
       font-size: 14px;
-      line-height: 1.15;
-      position: absolute;
-      margin-top: -51px;
     }
     `
     );
@@ -903,6 +880,22 @@
     `,
       ++ruleIndex
     );
+    const rootDiv = document.createElement("div");
+    rootDiv.setAttribute("id", containerId);
+    const button = document.createElement("button");
+    button.innerText = "Copy";
+    const message = document.createElement("span");
+    message.innerText = "Copied mod name and version";
+    rootDiv.append(button, message);
+    const pageTitleDiv = document.getElementById("pagetitle");
+    const modStatsUl = pageTitleDiv.querySelector("ul.stats");
+    pageTitleDiv.insertBefore(rootDiv, modStatsUl);
+    const h1 = pageTitleDiv.querySelector("h1:nth-of-type(1)");
+    const h1Clone = h1.cloneNode(true);
+    h1Clone.setAttribute("style", "vertical-align:middle; display: inline;");
+    h1.style.display = "none";
+    rootDiv.insertBefore(h1Clone, button);
+    button.style.marginLeft = "16px";
     return rootDiv;
   };
   var title = document.head.querySelector("title");
@@ -1013,16 +1006,16 @@
     const container = document.getElementById("comment-container");
     container.querySelector("div.head-nav")?.remove();
     container.querySelector("div.bottom-nav")?.remove();
-    showSpoilers(container);
     const stickyLis = container.querySelectorAll("ol>li.comment-sticky");
     for (let i = 0; i < stickyLis.length; i++) {
       replaceYoutubeVideosToAnchor(stickyLis[i]);
       replaceThumbnailUrlsToImageUrls(stickyLis[i]);
     }
-    const unstickyLis = container.querySelectorAll("ol>li:not(.comment-sticky)");
+    const unstickyLis = document.querySelectorAll("div#comment-container>ol>li:not(.comment-sticky)");
     for (let i = 0; i < unstickyLis.length; i++) {
       unstickyLis[i].remove();
     }
+    showSpoilers(container);
   }
 
   // ../posts_tab_actions.ts

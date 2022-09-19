@@ -164,6 +164,8 @@ export function replaceYoutubeVideosToAnchor(container: HTMLElement): void {
     const videoId = parts[parts.length - 1];
     const watchA = document.createElement("a");
     const watchUrl = `https://www.youtube.com/watch?v=${videoId}`;
+    // v0.1.2 修复多个 embedded YouTube videos 在一行的问题
+    watchA.style.display = 'block'
     watchA.setAttribute("href", watchUrl);
     watchA.innerText = watchUrl;
     const parent = youtubeIframes[i].parentNode;

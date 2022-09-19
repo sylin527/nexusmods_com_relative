@@ -21,11 +21,7 @@
 </div> 
 */
 
-import {
-  showSpoilers,
-  replaceYoutubeVideosToAnchor,
-  replaceThumbnailUrlsToImageUrls,
-} from "./shared.ts";
+import { showSpoilers, replaceYoutubeVideosToAnchor, replaceThumbnailUrlsToImageUrls } from "./shared.ts";
 
 export function isForumTab(tab: string): boolean {
   return tab === "forum";
@@ -33,27 +29,24 @@ export function isForumTab(tab: string): boolean {
 
 export function simplify() {
   document.body.querySelector("#tab-modtopics > span")?.remove();
-  const container = document.getElementById(
-    "comment-container"
-  ) as HTMLDivElement;
+  const container = document.getElementById("comment-container") as HTMLDivElement;
   container.querySelector("div.head-nav")?.remove();
   container.querySelector("div.bottom-nav")?.remove();
 
   // 作者评论
-  const authorComments = container.querySelectorAll<HTMLLIElement>(
-    "ol>li.comment-author"
-  );
+  const authorComments = container.querySelectorAll<HTMLLIElement>("ol>li.comment-author");
   for (let i = 0; i < authorComments.length; i++) {
-    showSpoilers(authorComments[i]);
     replaceYoutubeVideosToAnchor(authorComments[i]);
     replaceThumbnailUrlsToImageUrls(authorComments[i]);
   }
 
   // 非作者评论
+  // v0.1.2 不会移除 li.comment-sticky 内的 li:not(.comment-sticky)
   const nonAuthorComments = container.querySelectorAll<HTMLLIElement>(
-    "ol>li:not(.comment-author)"
+    "div#comment-container>ol>li:not(.comment-author)"
   );
   for (let i = 0; i < nonAuthorComments.length; i++) {
     nonAuthorComments[i].remove();
   }
+  showSpoilers(container);
 }

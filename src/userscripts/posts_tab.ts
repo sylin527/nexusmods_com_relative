@@ -31,7 +31,7 @@ export function simplify() {
   const container = document.getElementById("comment-container") as HTMLDivElement;
   container.querySelector("div.head-nav")?.remove();
   container.querySelector("div.bottom-nav")?.remove();
-  showSpoilers(container);
+
   // 置顶评论
   const stickyLis = container.querySelectorAll<HTMLLIElement>("ol>li.comment-sticky");
   for (let i = 0; i < stickyLis.length; i++) {
@@ -41,8 +41,11 @@ export function simplify() {
 
   // 移除非置顶评论
   // :not() 反选
-  const unstickyLis = container.querySelectorAll<HTMLLIElement>("ol>li:not(.comment-sticky)");
+  // v0.1.2 不会移除 li.comment-sticky 内的 li:not(.comment-sticky)
+  const unstickyLis = document.querySelectorAll<HTMLLIElement>("div#comment-container>ol>li:not(.comment-sticky)");
   for (let i = 0; i < unstickyLis.length; i++) {
     unstickyLis[i].remove();
   }
+
+  showSpoilers(container);
 }

@@ -31,52 +31,21 @@ import {
 import { getActionContainer, hideSylin527Ui } from "./ui.ts";
 
 /**
- * <div id="sylin527CopyRoot">
+ * <div id="sylin527CopyContainer">
  *  <button>Copy</button>
  *  <span>Copied mod name and version.</span>
  * </div>
  */
 const createCopyContainer = function (): HTMLDivElement {
   const containerId = "sylin527CopyContainer";
-  const rootDiv = document.createElement("div");
-  rootDiv.setAttribute("id", containerId);
-  const button = document.createElement("button");
-  button.innerText = "Copy";
-  const message = document.createElement("span");
-  message.innerText = "Copied mod name and version";
-  rootDiv.append(button, message);
-  const pagetitle = document.getElementById("pagetitle");
-  // 表示 mod name 的 <h1> 的后一个兄弟元素
-  const nameNextElem = pagetitle!.querySelector("ul.stats");
-  pagetitle!.insertBefore(rootDiv, nameNextElem);
-
-  const h1 = pagetitle!.querySelector<HTMLElement>("h1:nth-of-type(1)") as HTMLHeadingElement;
-  // 先把本组件根元素添加进 #pagetitle, 之后再修改这个 <h1> 为 inline-block 以获取 <h1> 的内容宽度
-  h1.style.display = "inline-block";
-  const marginLeft = h1.clientWidth! + 16 + "px";
-  // 控制台键入: document.querySelector('#pagetitle > h1:nth-child(2)').clientWidth
-  // 不回车, 让其实时执行
-  // 刷新页面, 发现刚载入时有个 clientWidth, 设为 clientWidth1, window load event 后设为 clientWidth2,
-  // 两个值不一样了, clientWidth1 比 clientWidth2 大
-  self.addEventListener("load", () => {
-    rootDiv.style.marginLeft = h1.clientWidth + 16 + "px";
-  });
-
-  // 避免 rootDiv.remove() 之后, h1 错位
-  pagetitle!.insertBefore(document.createElement("div"), rootDiv);
-
   const newStyle = document.createElement("style");
   document.head.appendChild(newStyle);
   const sheet = newStyle.sheet!;
   let ruleIndex = sheet.insertRule(
     `
     #${containerId} {
-      margin-left: ${marginLeft};
       font-family: 'Roboto',sans-serif;
       font-size: 14px;
-      line-height: 1.15;
-      position: absolute;
-      margin-top: -51px;
     }
     `
   );
@@ -108,6 +77,32 @@ const createCopyContainer = function (): HTMLDivElement {
     `,
     ++ruleIndex
   );
+  const rootDiv = document.createElement("div");
+  rootDiv.setAttribute("id", containerId);
+  const button = document.createElement("button");
+  button.innerText = "Copy";
+  const message = document.createElement("span");
+  message.innerText = "Copied mod name and version";
+  rootDiv.append(button, message);
+  const pageTitleDiv = document.getElementById("pagetitle") as HTMLDivElement;
+  const modStatsUl = pageTitleDiv.querySelector("ul.stats") as HTMLUListElement;
+  pageTitleDiv.insertBefore(rootDiv, modStatsUl);
+
+  // 不删除原 h1, 是为了保持页面结构
+  const h1 = pageTitleDiv.querySelector<HTMLElement>("h1:nth-of-type(1)") as HTMLHeadingElement;
+  const h1Clone = h1.cloneNode(true) as HTMLHeadingElement;
+  // inline, inline-block 多行有区别
+  h1Clone.setAttribute("style", "vertical-align:middle; display: inline;");
+  h1.style.display = "none";
+  rootDiv.insertBefore(h1Clone, button);
+  button.style.marginLeft = "16px";
+
+  // [lyne408] 控制台键入, 刷新页面, 可以得到实时结果
+  // 控制台键入: document.querySelector('#pagetitle > h1:nth-child(2)').clientWidth
+  // 不回车, 让其实时执行
+  // 刷新页面, 发现刚载入时有个 clientWidth, 设为 clientWidth1, window load event 后设为 clientWidth2,
+  // 两个值不一样了, clientWidth1 比 clientWidth2 大
+
   return rootDiv;
 };
 

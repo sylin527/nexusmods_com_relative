@@ -16,7 +16,7 @@ Show requirements, changelogs, file descriptions and spoilers.
 
 Replace thumbnails to original, replace embedded YouTube videos to links.
 
-Remove unnecessary contents, such as page header, footer of nexusmods.com. 
+Remove unnecessary contents, such as page header, footer of nexusmods.com.
 
 Remove mod base info content if it is not mod page.
 
@@ -36,17 +36,15 @@ The locate of this UserScript is English.
 
 ### Tweak Page Title
 
-In mod page(description tab), tweak title to this format: 
+In mod page(description tab), tweak title to this format:
 
 `<mod_name> <mod_version>(<date_last_updated>): <brief_overview>`
 
-In other tabs(files, posts, etc), tweak title to this format: 
+In other tabs(files, posts, etc), tweak title to this format:
 
 `<mod_name> <mod_version>(<date_last_updated>) tab=<tab>`
 
-
-
-Example: Open https://www.nexusmods.com/skyrim/mods/88876
+Example: Open <https://www.nexusmods.com/skyrim/mods/88876>
 
 In mod page(description tab), title is:
 
@@ -64,11 +62,11 @@ Unbelievable Grass 2 Redux 1.3.6(18.2.9) tab=files
 
 ![](user_guide/Copy_Mod_and_Version.png)
 
-In mod page(description tab), copy title to this format: 
+In mod page(description tab), copy title to this format:
 
 `<mod_name> <mod_version>(<date_last_updated>)`
 
-Example: Open https://www.nexusmods.com/skyrim/mods/88876
+Example: Open <https://www.nexusmods.com/skyrim/mods/88876>
 
 Copy `Unbelievable Grass 2 Redux 1.3.6(18.2.9)` to clipboard.
 
@@ -82,22 +80,17 @@ Replace thumbnails to original, replace embedded YouTube videos to links.
 
 ![](user_guide/Mod_Page_not_simplified_1.png)
 
-
 **Mod Page simplified 1**
 
 ![](user_guide/Mod_Page_simplified_1.png)
-
 
 **Mod Page not simplified 2**
 
 ![](user_guide/Mod_Page_not_simplified_2.png)
 
-
 **Mod Page simplified 2**
 
 ![](user_guide/Mod_Page_simplified_2.png)
-
-
 
 ### Simplify Files Tab
 
@@ -105,13 +98,9 @@ Show description of files, spoilers and real file names downloaded.
 
 Replace thumbnails to original, replace embedded YouTube videos to links.
 
-
-
 **Files Tab not simplified**
 
 ![](user_guide/Files_Tab_not_simplified.png)
-
-
 
 **Files Tab simplified**
 
@@ -133,13 +122,9 @@ Remove non-author comments.
 
 Replace thumbnails to original, replace embedded YouTube videos to links.
 
+Example:
 
-
-Example: 
-
-open https://www.nexusmods.com/skyrimspecialedition/mods/9005/?tab=forum&topic_id=9351408
-
-
+open <https://www.nexusmods.com/skyrimspecialedition/mods/9005/?tab=forum&topic_id=9351408>
 
 **Forum Tab not simplified**
 
@@ -157,3 +142,13 @@ Remove comments.
 
 Replace thumbnails to original, replace embedded YouTube videos to links.
 
+## Changelogs
+
+### 0.1.2.2022.9.17
+
+- Fix the incorrect position of copy button when mod name is long (multiline).
+- Fix the removement of nested non-sticky comments of sticky comments in forum or posts tab. Now not remove.
+- Fix the multi YouTube links in one line and no space separator. Now each YouTube link one line when multi embedded YouTube videos adjacent.
+### 0.1.1.beta.2022.9.17
+
+Initial release.
