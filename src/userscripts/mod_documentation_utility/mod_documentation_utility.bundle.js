@@ -7,7 +7,7 @@
 // @icon        https://www.nexusmods.com/favicon.ico
 // @grant       none
 // @license     GPLv3
-// @version     0.1.2.2022.9.19
+// @version     0.1.3.2022.9.19
 // @author      sylin527
 // @description github.com/sylin527/nexusmods_com_relative. Help to save the mod documentations to local disk. Simplify mod page, files tab, posts tab, forum tab, article page, show requirements, changelogs, file descriptions and spoilers, replace thumbnails to original, replace embedded YouTube videos to links, remove unnecessary contents. After saving those pages by SingleFile, you can show/hide requirements, changelogs, spoilers, real file names downloaded, etc.
 // ==/UserScript==
@@ -892,7 +892,7 @@
     pageTitleDiv.insertBefore(rootDiv, modStatsUl);
     const h1 = pageTitleDiv.querySelector("h1:nth-of-type(1)");
     const h1Clone = h1.cloneNode(true);
-    h1Clone.setAttribute("style", "vertical-align:middle; display: inline;");
+    h1Clone.setAttribute("style", "vertical-align:middle; display: inline; line-height:1.5;");
     h1.style.display = "none";
     rootDiv.insertBefore(h1Clone, button);
     button.style.marginLeft = "16px";
@@ -994,6 +994,9 @@
       title.innerText = `${getModName()} ${getModVersionWithDate()}`;
       setSectionAsTopElement();
       hideSylin527Ui();
+      const pageTitleDiv = document.getElementById("pagetitle");
+      const h1 = pageTitleDiv.querySelector("h1:nth-of-type(1)");
+      h1.style.display = "block";
     });
     checkTab3(entryElem);
   }

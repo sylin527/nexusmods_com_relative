@@ -18,7 +18,7 @@ function generateGallery(): IGallery {
       // 如果有描述, 该 `<img>` 有 `alt`, `title` 属性. 若无, 则没有.
       const titleAttr = innerImgElem.getAttribute("title");
       // `getAttribute()` 找不到属性时返回 `null`
-      if (null !== titleAttr) {
+      if (titleAttr) {
         descriptions.push(titleAttr);
       } else {
         descriptions.push("");
@@ -36,9 +36,14 @@ function generateGallery(): IGallery {
 
 /**
  * 生成 Gallery HTML 的网页文本内容
- * @returns string | null
+ * 
+ * Why startIndex, endIndex?
+ * 比如有个 mod A v1 时 gallery 有 400 张图片, 下载了 v1.
+ * mod A v2 时更新, gallery 增加了 100 张图片, 共计 500 张, 这时候再下 500 张就比较耗费资源了.
+ * 所以用 startIndex, endIndex 来增量下载.
+ * startIndex, endIndex 对应 entry element 的属性.
  */
-const generateGalleryHtmlInner = function (modGallery: IGallery): string {
+function generateGalleryHtmlInner(modGallery: IGallery, startIndex = 0, endIndex = Infinity): string {
   /*
     为何是 gallery_of, 而非 images_of, author_images_of, preview_of?
 
@@ -56,31 +61,39 @@ const generateGalleryHtmlInner = function (modGallery: IGallery): string {
   // 需要: 1. 添加序号 2. 文件路径不允许的特殊字符处理
   const { descriptions, urls } = modGallery;
   const len = descriptions.length;
-  for (let i = 0; i < len; i++) {
+
+  let i = 0;
+  let end = len;
+  if (startIndex > 0) i = startIndex;
+  if (endIndex !== Infinity) end = endIndex;
+  // 按照 substring 习惯, 左闭区间, 右开区间
+  for (; i < end; i++) {
     descriptions[i] = `${(i + 1).toString().padStart(len.toString().length, "0")}_${replaceIllegalCharToMark(
       descriptions[i]
     )}`;
   }
   return generateGalleryHtmlLib({ title: titleText, descriptions, urls });
-};
+}
 
-const createEntryElement = function (): HTMLAnchorElement {
+function createEntryElement(): HTMLAnchorElement {
   const anchor = document.createElement("a");
-  // anchor.setAttribute('id', 'generateGallery')
+  anchor.setAttribute("id", "generateGalleryHTML");
+  anchor.setAttribute("startIndex", "0");
+  anchor.setAttribute("endIndex", "Infinity");
   anchor.innerText = "Generate Gallery HTML";
   return anchor;
-};
+}
 
 /**
  * 连接 Gallery HTML 的文本内容至 入口组件里的 <a>
  * @returns
  */
-export const generateGalleryHtml = function () {
+export function generateGalleryHtml() {
   const uiRoot = getActionContainer();
   const entryElem = createEntryElement();
   uiRoot.appendChild(entryElem);
-  const htmlContent = generateGalleryHtmlInner(generateGallery()!);
-  if (null !== htmlContent) {
-    linkContent(entryElem, htmlContent);
-  }
-};
+  const startIndex = entryElem.getAttribute("startIndex") as string;
+  const endIndex = entryElem.getAttribute("endIndex") as string;
+  const htmlContent = generateGalleryHtmlInner(generateGallery(), parseInt(startIndex), parseInt(endIndex));
+  linkContent(entryElem, htmlContent);
+}

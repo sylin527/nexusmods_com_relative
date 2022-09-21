@@ -91,8 +91,9 @@ const createCopyContainer = function (): HTMLDivElement {
   // 不删除原 h1, 是为了保持页面结构
   const h1 = pageTitleDiv.querySelector<HTMLElement>("h1:nth-of-type(1)") as HTMLHeadingElement;
   const h1Clone = h1.cloneNode(true) as HTMLHeadingElement;
+  // 此 h1 的 block -> inline 后, 原 margin 失效, 用个 line-height 达到近似原来的效果.
   // inline, inline-block 多行有区别
-  h1Clone.setAttribute("style", "vertical-align:middle; display: inline;");
+  h1Clone.setAttribute("style", "vertical-align:middle; display: inline; line-height:1.5;");
   h1.style.display = "none";
   rootDiv.insertBefore(h1Clone, button);
   button.style.marginLeft = "16px";
@@ -269,6 +270,10 @@ export function simplifyModPage() {
     title.innerText = `${getModName()} ${getModVersionWithDate()}`;
     setSectionAsTopElement();
     hideSylin527Ui();
+    // copy mod and version 把此 h1 隐藏了, 需要显示
+    const pageTitleDiv = document.getElementById("pagetitle") as HTMLDivElement;
+    const h1 = pageTitleDiv.querySelector("h1:nth-of-type(1)") as HTMLHeadingElement;
+    h1.style.display = "block";
   });
   checkTab(entryElem);
 }

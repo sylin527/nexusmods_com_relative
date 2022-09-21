@@ -144,6 +144,11 @@ Replace thumbnails to original, replace embedded YouTube videos to links.
 
 ## Changelogs
 
+### 0.1.3.2022.9.20
+
+- Fix the small height value of mod name title. Now has more space belong mod category and mod stats like nexusmods.com original.
+- Fix the hidden mod name title. Now show.
+
 ### 0.1.2.2022.9.19
 
 - Fix the incorrect position of copy button when mod name is long (multiline).
