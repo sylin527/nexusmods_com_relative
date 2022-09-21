@@ -3,13 +3,6 @@ export const delay = function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-// file:///H:/Workspaces/@lyne408/browser_lib/src/dom_util.ts
-export const linkContent = function (anchorElement: HTMLAnchorElement, content: BlobPart): HTMLAnchorElement {
-  const blob = new Blob([content]);
-  anchorElement.setAttribute("target", "_blank");
-  anchorElement.setAttribute("href", URL.createObjectURL(blob));
-  return anchorElement;
-};
 
 // "file:///H:/Workspaces/@lyne408/ecmascript_lib/src/path_util.ts";
 const illegalCharMarkMapping: { [key: string]: string } = {
@@ -32,4 +25,4 @@ export const replaceIllegalCharToMark = function (entityName: string) {
   return entityName.replace(/(\?)|(\*)|(:)|(<)|(>)|(")|(\/)|(\\)|(\|)/g, (match) => illegalCharMarkMapping[match]);
 };
 
-export const isSylin527 = false;
+export const isSylin527 = true;

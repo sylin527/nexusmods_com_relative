@@ -159,12 +159,6 @@
   var delay = function delay2(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   };
-  var linkContent = function(anchorElement, content) {
-    const blob = new Blob([content]);
-    anchorElement.setAttribute("target", "_blank");
-    anchorElement.setAttribute("href", URL.createObjectURL(blob));
-    return anchorElement;
-  };
   var illegalCharMarkMapping = {
     "?": "[QUESTION_MARK]",
     "*": "[ASTERISK]",
@@ -180,7 +174,7 @@
     entityName = entityName.trim();
     return entityName.replace(/(\?)|(\*)|(:)|(<)|(>)|(")|(\/)|(\\)|(\|)/g, (match) => illegalCharMarkMapping[match]);
   };
-  var isSylin527 = false;
+  var isSylin527 = true;
 
   // ../files_tab.ts
   var filesTabSelector = "div.tabcontent.tabcontent-mod-page";
@@ -691,17 +685,23 @@
 
   // ../generate_gallery_html/generate_gallery_html.ts
   var { body: body3 } = document;
-  function generateGallery() {
+  function generateGallery(startIndex = 0, endIndex = NaN) {
     const liArrayLike = body3.querySelectorAll("#sidebargallery>ul.thumbgallery>li.thumb");
     const descriptions = [];
     const urls = [];
-    for (let i = 0; i < liArrayLike.length; i++) {
+    let i = 0;
+    let end = liArrayLike.length;
+    if (startIndex > 0)
+      i = startIndex;
+    if (!isNaN(endIndex))
+      end = endIndex;
+    for (; i < end; i++) {
       const liElem = liArrayLike[i];
       const dataSrc = liElem.getAttribute("data-src");
       const innerImgElem = liElem.querySelector("figure>a>img");
       if (null !== innerImgElem) {
         const titleAttr = innerImgElem.getAttribute("title");
-        if (null !== titleAttr) {
+        if (titleAttr) {
           descriptions.push(titleAttr);
         } else {
           descriptions.push("");
@@ -716,7 +716,7 @@
       urls
     };
   }
-  var generateGalleryHtmlInner = function(modGallery) {
+  function generateGalleryHtmlInner(modGallery) {
     const titleText = `_gallery_of_${getModName()}_${getModVersion()}`;
     const { descriptions, urls } = modGallery;
     const len = descriptions.length;
@@ -726,21 +726,27 @@
       )}`;
     }
     return generate({ title: titleText, descriptions, urls });
-  };
-  var createEntryElement3 = function() {
-    const anchor = document.createElement("a");
-    anchor.innerText = "Generate Gallery HTML";
-    return anchor;
-  };
-  var generateGalleryHtml = function() {
+  }
+  function createEntryElement3() {
+    const button = document.createElement("button");
+    button.setAttribute("id", "generateGalleryHTML");
+    button.setAttribute("start_index", "0");
+    button.setAttribute("end_index", "length");
+    button.innerText = "Generate Gallery HTML";
+    return button;
+  }
+  function generateGalleryHtml() {
     const uiRoot = getActionContainer();
     const entryElem = createEntryElement3();
     uiRoot.appendChild(entryElem);
-    const htmlContent = generateGalleryHtmlInner(generateGallery());
-    if (null !== htmlContent) {
-      linkContent(entryElem, htmlContent);
-    }
-  };
+    entryElem.addEventListener("click", () => {
+      const startIndex = entryElem.getAttribute("start_index");
+      const endIndex = entryElem.getAttribute("end_index");
+      const htmlContent = generateGalleryHtmlInner(generateGallery(parseInt(startIndex), parseInt(endIndex)));
+      const url = URL.createObjectURL(new Blob([htmlContent]));
+      window.open(url, "_blank");
+    });
+  }
 
   // ../description_tab.ts
   var templateDescriptionContainerSelector = "div.container.tab-description";

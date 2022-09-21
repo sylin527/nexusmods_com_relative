@@ -1,16 +1,33 @@
 import { generate as generateGalleryHtmlLib, IGallery } from "./gallery_html.ts";
 import { getModName, getModVersion } from "../tabs_shared.ts";
 import { getActionContainer } from "../ui.ts";
-import { linkContent, replaceIllegalCharToMark } from "../util.ts";
+import { replaceIllegalCharToMark } from "../util.ts";
 const { body } = document;
-
-function generateGallery(): IGallery {
+/**
+ *
+ * Why startIndex, endIndex?
+ * 比如有个 mod A v1 时 gallery 有 400 张图片, 下载了 v1.
+ * mod A v2 时更新, gallery 增加了 100 张图片, 共计 500 张, 这时候再下 500 张就比较耗费资源了.
+ * 所以用 startIndex, endIndex 来增量下载.
+ * startIndex, endIndex 对应 entry element 的 start_index, end_index 属性.
+ */
+function generateGallery(startIndex = 0, endIndex = NaN): IGallery {
   // [lyne408] LI, li, list item
   const liArrayLike = body.querySelectorAll<HTMLLIElement>("#sidebargallery>ul.thumbgallery>li.thumb");
 
   const descriptions: string[] = [];
   const urls: string[] = [];
-  for (let i = 0; i < liArrayLike.length; i++) {
+  let i = 0;
+  let end = liArrayLike.length;
+  if (startIndex > 0) i = startIndex;
+  // Infinity === Infinity  true
+  // Infinity !== 200  true
+  // parseInt('Infinity') NaN, 但 parseInt('Infinity') === NaN false, NaN !== NaN
+  // isNaN(parseInt('Infinity')) true
+  // typeof NaN === typeof Infinity  "number"
+  if (!isNaN(endIndex)) end = endIndex;
+  // 如果 end 为 NaN, 不执行循环
+  for (; i < end; i++) {
     const liElem = liArrayLike[i];
     const dataSrc = liElem.getAttribute("data-src");
     const innerImgElem = liElem.querySelector<HTMLImageElement>("figure>a>img");
@@ -36,14 +53,8 @@ function generateGallery(): IGallery {
 
 /**
  * 生成 Gallery HTML 的网页文本内容
- * 
- * Why startIndex, endIndex?
- * 比如有个 mod A v1 时 gallery 有 400 张图片, 下载了 v1.
- * mod A v2 时更新, gallery 增加了 100 张图片, 共计 500 张, 这时候再下 500 张就比较耗费资源了.
- * 所以用 startIndex, endIndex 来增量下载.
- * startIndex, endIndex 对应 entry element 的属性.
  */
-function generateGalleryHtmlInner(modGallery: IGallery, startIndex = 0, endIndex = Infinity): string {
+function generateGalleryHtmlInner(modGallery: IGallery): string {
   /*
     为何是 gallery_of, 而非 images_of, author_images_of, preview_of?
 
@@ -62,12 +73,8 @@ function generateGalleryHtmlInner(modGallery: IGallery, startIndex = 0, endIndex
   const { descriptions, urls } = modGallery;
   const len = descriptions.length;
 
-  let i = 0;
-  let end = len;
-  if (startIndex > 0) i = startIndex;
-  if (endIndex !== Infinity) end = endIndex;
   // 按照 substring 习惯, 左闭区间, 右开区间
-  for (; i < end; i++) {
+  for (let i = 0; i < len; i++) {
     descriptions[i] = `${(i + 1).toString().padStart(len.toString().length, "0")}_${replaceIllegalCharToMark(
       descriptions[i]
     )}`;
@@ -75,13 +82,14 @@ function generateGalleryHtmlInner(modGallery: IGallery, startIndex = 0, endIndex
   return generateGalleryHtmlLib({ title: titleText, descriptions, urls });
 }
 
-function createEntryElement(): HTMLAnchorElement {
-  const anchor = document.createElement("a");
-  anchor.setAttribute("id", "generateGalleryHTML");
-  anchor.setAttribute("startIndex", "0");
-  anchor.setAttribute("endIndex", "Infinity");
-  anchor.innerText = "Generate Gallery HTML";
-  return anchor;
+function createEntryElement(): HTMLButtonElement {
+  const button = document.createElement("button");
+  button.setAttribute("id", "generateGalleryHTML");
+  // attribute 不区分大小写, 全部转为小写
+  button.setAttribute("start_index", "0");
+  button.setAttribute("end_index", "length");
+  button.innerText = "Generate Gallery HTML";
+  return button;
 }
 
 /**
@@ -92,8 +100,11 @@ export function generateGalleryHtml() {
   const uiRoot = getActionContainer();
   const entryElem = createEntryElement();
   uiRoot.appendChild(entryElem);
-  const startIndex = entryElem.getAttribute("startIndex") as string;
-  const endIndex = entryElem.getAttribute("endIndex") as string;
-  const htmlContent = generateGalleryHtmlInner(generateGallery(), parseInt(startIndex), parseInt(endIndex));
-  linkContent(entryElem, htmlContent);
+  entryElem.addEventListener("click", () => {
+    const startIndex = entryElem.getAttribute("start_index") as string;
+    const endIndex = entryElem.getAttribute("end_index") as string;
+    const htmlContent = generateGalleryHtmlInner(generateGallery(parseInt(startIndex), parseInt(endIndex)));
+    const url = URL.createObjectURL(new Blob([htmlContent]));
+    window.open(url, "_blank");
+  });
 }

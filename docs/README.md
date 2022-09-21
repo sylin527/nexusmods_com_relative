@@ -154,6 +154,7 @@ Replace thumbnails to original, replace embedded YouTube videos to links.
 - Fix the incorrect position of copy button when mod name is long (multiline).
 - Fix the removement of nested non-sticky comments of sticky comments in forum or posts tab. Now not remove.
 - Fix the multi YouTube links in one line and no space separator. Now each YouTube link one line when multi embedded YouTube videos adjacent.
+
 ### 0.1.1.beta.2022.9.17
 
 Initial release.
