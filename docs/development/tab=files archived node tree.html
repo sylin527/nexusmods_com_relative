@@ -1,0 +1,130 @@
+参考
+A: https://www.nexusmods.com//Core/Libs/Common/Widgets/ModFilesTab?id=2182&game_id=1704&category=archived
+B: https://www.nexusmods.com/skyrimspecialedition/mods/2182/?tab=files&category=archived
+
+其中 A 与 B 的 archived files 内容并不完全一样, A 的 `<dd>` 中没有下载按钮.
+
+  所以以 B 结构作为 userscript 参照
+
+  ```html
+  <div class="premium-banner container"></div>
+  <div id="mod_files" data-game-id="1704" data-mod-id="9005" class="container tab-files condensed fill-file-stats">
+    <div id="file-container-archived-files" class="tabbed-section tabbed-block files-tabs" >
+      <div class="file-category-header">
+        <h2>Archived files</h2>
+        <div>
+          <label>Sort by</label>
+          <!-- ...其它 Sort by 相关的内容 -->
+        </div>
+      </div>
+      <p>The files in this section are for reference only and are no longer supported by the mod author. Please ensure
+        you
+        are using the latest version before asking for support with this mod.</p>
+      <div class="accordionitems">
+        <dl class="accordion">
+          <!-- dt 下只有一个 div 子元素 -->
+          <dt id="file-expander-header-142394" class="file-expander-header clearfix " data-id="142394"
+            data-name="Realistic Water Two - Watercolor Template" data-size="3" data-version="1.0.0"
+            data-date="1590609690">
+            <div style="display: flex;">
+              <!-- 文件名前面那个 √, 建议保留 -->
+              <div class="result safe inline-flex" style="height: 25px; position: relative; top: 5px;">
+                <a href="https://www.virustotal.com/gui/file/8355172447161d85eed76a4108e67a6db80ea804cd5c1ddc0d148c99fcdb272d/detection/f-8355172447161d85eed76a4108e67a6db80ea804cd5c1ddc0d148c99fcdb272d-1590609694"
+                  class="flex-label expander-true-link" target="_blank" rel="noreferrer">
+                  <span class="tooltip tooltipstered">
+                    <svg title="" class="icon icon-ticksafe">
+                      <use xlink:href="https://www.nexusmods.com/assets/images/icons/icons.svg#icon-ticksafe"></use>
+                    </svg> </span>
+                </a>
+              </div>
+              <!-- 文件名 -->
+              <p style="margin: 5px 5px 0 0;">Realistic Water Two - Watercolor Template</p>
+              <!-- 如已下载, 会显示一个一个下载 icon, 建议保留 -->
+              <i class="material-icons" style="margin-top: 3px"
+                title="You downloaded this mod file on 30 Sep 2022">cloud_download</i>
+              <!-- 文件信息 -->
+              <div style="flex-grow: 1;" class="file-download-stats clearfix">
+                <ul style="float:right;" class="stats">
+                  <!-- 如已下载, 会显示下载日期, 建议保留-->
+                  <li class="stat-downloaded">
+                    <div class="statitem">
+                      <div class="titlestat">Downloaded</div>
+                      <div class="stat">30 Sep 2022</div>
+                    </div>
+                  </li>
+                  <li class="stat-uploaddate">
+                    <div class="statitem">
+                      <div class="titlestat">Date uploaded</div>
+                      <div class="stat">28 May 2020, 5:01AM</div>
+                    </div>
+                  </li>
+                  <li class="stat-filesize">
+                    <div class="statitem">
+                      <div class="titlestat">File size</div>
+                      <div class="stat">3KB</div>
+                    </div>
+                  </li>
+                  <li class="stat-uniquedls">
+                    <div class="statitem">
+                      <div class="titlestat">Unique DLs</div>
+                      <div class="stat"> - </div>
+                    </div>
+                  </li>
+                  <li class="stat-totaldls">
+                    <div class="statitem">
+                      <div class="titlestat">Total DLs</div>
+                      <div class="stat"> - </div>
+                    </div>
+                  </li>
+                  <li class="stat-version">
+                    <div class="statitem">
+                      <div class="titlestat">Version</div>
+                      <div class="stat">
+                        1.0.0 </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+              <!-- 显示/隐藏文件描述的指向图标, 建议保留
+            打开时, <dt> 的 class 变为 "file-expander-header clearfix accopen", 多了一个 accopen -->
+              <div class="acc-status" style="top: 14px">
+                <svg title="" class="icon icon-arrow">
+                  <use xlink:href="https://www.nexusmods.com/assets/images/icons/icons.svg#icon-arrow"></use>
+                </svg>
+              </div>
+            </div>
+          </dt>
+          <!-- dd 隐藏时: <dd class="clearfix"  style="display: none;"> -->
+          <!-- dd 显示时: <dd class="clearfix open" style="display: block;"> -->
+          <!-- archived files tab 的 dd 中确实没有真实文件名 -->
+          <dd class="clearfix" data-id="142394" style="display: none;">
+            <!-- 文件描述 -->
+            <div class="tabbed-block files-description">
+              <p>Template for users to make Watercolor "presets" with. For use with RWT v3.0+.<br>See the article:
+                https://www.nexusmods.com/skyrimspecialedition/articles/2027</p>
+            </div>
+            <div class="tabbed-block">
+              <ul class="accordion-downloads clearfix">
+                <li><a class="btn inline-flex"
+                    href="https://www.nexusmods.com/skyrimspecialedition/mods/17072?tab=files&amp;file_id=142394&amp;nmm=1"
+                    tabindex="0"><svg title="" class="icon icon-nmm">
+                      <use xlink:href="https://www.nexusmods.com/assets/images/icons/icons.svg#icon-nmm"></use>
+                    </svg>
+                    <span class="flex-label">Mod manager download</span></a></li>
+                <!-- 第二个 li 不知道干嘛用的 -->
+                <li></li>
+                <!-- 第三个 li 包含下载文件对应的网页url -->
+                <li><a class="btn inline-flex"
+                    href="https://www.nexusmods.com/skyrimspecialedition/mods/17072?tab=files&amp;file_id=142394"
+                    tabindex="0"><svg title="" class="icon icon-manual">
+                      <use xlink:href="https://www.nexusmods.com/assets/images/icons/icons.svg#icon-manual"></use>
+                    </svg>
+                    <span class="flex-label">Manual download</span></a></li>
+              </ul>
+            </div>
+          </dd>
+      </div>
+    </div>
+  </div>
+  </div>
+  ```

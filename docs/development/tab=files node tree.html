@@ -1,87 +1,28 @@
 <div class="tabcontent tabcontent-mod-page" aria-live="assertive" role="status">
-  <div class="premium-banner container" style="display: block">...</div>
-  <div id="mod_files">
-    <!-- Main Files root element, 默认显示 file description -->
-    <div id="file-container-main-files">
+  <!-- premium banner -->
+  <div class="premium-banner container" style="display: block"></div>
+  <!-- div#mod_files 有两个属性 data-game-id, data-mod-id -->
+  <div id="mod_files" data-game-id="1704" data-mod-id="2182">
+    <!-- 容器: Main Files, 不一定存在, 有些 mod 没有文件, 可能只有 old files, 可能只有 archived files -->
+    <div id="file-container-main-files" class="tabbed-section tabbed-block files-tabs">
+      <!-- 容器: file category -->
       <div class="file-category-header">
-         <!-- section title -->
         <h2>Main files</h2>
-         <!-- 'sort by' feature root element -->
+        <!-- 容器: "Sort by" component-->
         <div>
           <label>Sort by</label>
           <!-- other elements -->
         </div>
       </div>
+      <!-- 容器 div: files -->
       <div class="accordionitems">
-        <!-- file list container, 文件元信息是奇数 <dt>, 文件描述是偶数 <dd> -->
+        <!-- 列表 dl: files, 文件元信息是奇数 <dt>, 文件描述是偶数 <dd> -->
         <dl class="accordion">
-          <dt id="file-expander-header-265037" class="file-expander-header clearfix accopen" data-id="265037"
-            data-name="Nature of the Wild Lands" data-size="1020062" data-version="1.0.5-fix" data-date="1645165149">
-            <div style="display: flex;">
-              <div class="result  inline-flex" style="height: 25px; position: relative; top: 5px;">
-                <!-- Safe to use SVG icon, 都有 -->
-              </div>
-              <p style="margin: 5px 5px 0 0;">
-                <!-- file name on page, 都有 -->
-              </p>
-              <i class="material-icons" style="margin-top: 3px" title="You downloaded this mod file on 21 Feb 2022">
-                <!-- downloaded icon, 已下载才有 -->
-              </i>
-              <div style="flex-grow: 1;" class="file-download-stats clearfix">
-                <ul style="float:right;" class="stats">
-                  <li class="stat-downloaded">
-                    <!-- Downloaded Date, 已下载才有 -->
-                  </li>
-                  <li class="stat-uploaddate">
-                    <!-- Date uploaded, 都有 -->
-                  </li>
-                  <li class="stat-filesize">
-                    <!-- File size, 都有 -->
-                  </li>
-                  <li class="stat-uniquedls">
-                    <!-- Unique DLs -->
-                  </li>
-                  <li class="stat-totaldls">
-                    <!-- Total DLs -->
-                  </li>
-                  <li class="stat-version">
-                    <!-- Version -->
-                    <div class="statitem">
-                      <div class="titlestat">Version</div>
-                      <div class="stat">
-                        <a class="popup-btn-ajax dont-toggle-accordion">
-                          1.0.5-fix </a>
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-              <div class="acc-status" style="top: 14px">
-                <!-- toggle to hide file description button, 都有 -->
-              </div>
-            </div>
+          <!-- file header `dt` -->
+          <dt id="file-expander-header-265037">...
           </dt>
-          <dd class="clearfix open" data-id="265037">
-            <div class="tabbed-block files-description">
-              <p>
-                <!-- file description -->
-              </p>
-            </div>
-            <div class="tabbed-block">
-              <!-- Mod manager download -->
-              <!-- Manual download -->
-            </div>
-
-            <div class="tabbed-block">
-              <!-- Preview file contents.
-                注意: 包含下载的实际文件名, 建议添加到 File Tab下.
-                应该是 nexusmods.com 要求所有 mod 的文件必须是 archive.
-                哪怕只有一个文本文件, 所以必然有 "Preview file contents" 按钮.
-               -->
-              <a class="btn-ajax-content-preview" data-gid="1704" data-mid="63604"
-                data-url="Nature of the Wild Lands-63604-1-0-5-fix-1645165149.zip">Preview file contents</a>
-            </div>
-          </dd>
+          <!-- file description `dd`-->
+          <dd class="clearfix open">...</dd>
         </dl>
       </div>
     </div>
@@ -91,5 +32,164 @@
     <div id="file-container-miscellaneous-files">...</div>
     <!-- Old Files root element, 默认隐藏 file description -->
     <div id="file-container-old-files">...</div>
+    <!-- File archive -->
+    <section id="files-tab-footer"></section>
   </div>
 </div>
+
+
+<!-- 
+dt[id^=file-expander-header]
+file header
+-->
+<!-- 
+  属性 `data-id` 是文件 ID,
+  属性 ` data-name` 是文件显示的名字,
+  `data-size` 是文件大小,
+ `data-version` 是版本,
+ `data-date` 是上传日期, 单位是 second -->
+<dt id="file-expander-header-347905" class="file-expander-header clearfix accopen" data-id="347905"
+  data-name="BlubboPineReplacer_V3_Set1.zip" data-size="175902" data-version="3.1" data-date="1673199274">
+  <!-- 容器 div: file header -->
+  <div style="display: flex;">
+    <!-- safe info icon, 都有 -->
+    <div class="result safe inline-flex" style="height: 25px; position: relative; top: 5px;">
+      <a href="https://www.virustotal.com/gui/file/e215e0120ab911512d4d824a06d73a150661086ef516ff4bf715bcec7c86ace1/detection/f-e215e0120ab911512d4d824a06d73a150661086ef516ff4bf715bcec7c86ace1-1673199313"
+        class="flex-label expander-true-link" target="_blank" rel="noreferrer">
+        <span class="tooltip tooltipstered">
+          <svg title="" class="icon icon-ticksafe">
+            <use xlink:href="https://www.nexusmods.com/assets/images/icons/icons.svg#icon-ticksafe"></use>
+          </svg>
+        </span>
+      </a>
+    </div>
+    <!-- file name on page, 都有 -->
+    <p style="margin: 5px 5px 0 0;">BlubboPineReplacer_V3_Set1.zip</p>
+    <!-- downloaded icon, 已下载才有 -->
+    <i class="material-icons" style="margin-top: 3px"
+      title="You downloaded this mod file on 28 Jan 2023">cloud_download</i>
+    <!-- file download stats -->
+    <div style="flex-grow: 1;" class="file-download-stats clearfix">
+      <ul style="float:right;" class="stats">
+        <!-- date downloaded, 已下载才有 -->
+        <li class="stat-downloaded">
+          <div class="statitem">
+            <div class="titlestat">Downloaded</div>
+            <div class="stat">28 Jan 2023</div>
+          </div>
+        </li>
+        <!-- Date uploaded, 都有 -->
+        <li class="stat-uploaddate">
+          <div class="statitem">
+            <div class="titlestat">Date uploaded</div>
+            <div class="stat">09 Jan 2023, 1:34AM</div>
+          </div>
+        </li>
+        <!-- File size, 都有 -->
+        <li class="stat-filesize">
+          <div class="statitem">
+            <div class="titlestat">File size</div>
+            <div class="stat">171.8MB</div>
+          </div>
+        </li>
+        <!-- Unique DLs -->
+        <li class="stat-uniquedls">
+          <div class="statitem">
+            <div class="titlestat">Unique DLs</div>
+            <div class="stat">618</div>
+          </div>
+        </li>
+        <!-- Total DLs -->
+        <li class="stat-totaldls">
+          <div class="statitem">
+            <div class="titlestat">Total DLs</div>
+            <div class="stat">685</div>
+          </div>
+        </li>
+        <!-- Version -->
+        <li class="stat-version">
+          <div class="statitem">
+            <div class="titlestat">Version</div>
+            <div class="stat">3.1 </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <!-- toggle to hide file description button, 都有 -->
+    <div class="acc-status" style="top: 14px">
+      <svg title="" class="icon icon-arrow">
+        <use xlink:href="https://www.nexusmods.com/assets/images/icons/icons.svg#icon-arrow"></use>
+      </svg>
+    </div>
+  </div>
+</dt>
+
+<!-- 
+file description `dd`
+-->
+<!-- 属性 `data-id` 是文件 ID -->
+<dd class="clearfix open" data-id="347905">
+  <!-- file description -->
+  <div class="tabbed-block files-description">
+    <p>Set 1 of my new BlubboPines V3</p>
+  </div>
+  <!-- 容器 div: download buttons -->
+  <div class="tabbed-block">
+    <!-- 列表 ul: download buttons -->
+    <ul class="accordion-downloads clearfix">
+      <!-- Mod manager download -->
+      <li>
+        <a class="btn inline-flex"
+          href="https://www.nexusmods.com/skyrimspecialedition/mods/65241?tab=files&amp;file_id=347905&amp;nmm=1">
+          <svg title="" class="icon icon-nmm">
+            <use xlink:href="https://www.nexusmods.com/assets/images/icons/icons.svg#icon-nmm"></use>
+          </svg> <span class="flex-label">Mod manager download</span>
+        </a>
+      </li>
+      <!-- 的确没有子元素, 应该只是增大 download buttons 之间的间隙 -->
+      <li></li>
+      <!-- Manual download, 此 file 没有特别注明 Requirements -->
+      <li>
+        <a class="btn inline-flex"
+          href="https://www.nexusmods.com/skyrimspecialedition/mods/65241?tab=files&amp;file_id=347905">
+          <svg title="" class="icon icon-manual">
+            <use xlink:href="https://www.nexusmods.com/assets/images/icons/icons.svg#icon-manual"></use>
+          </svg>
+          <span class="flex-label">Manual download</span>
+        </a>
+      </li>
+      <!-- Manual download, 此 file 特别注明了 Requirements -->
+      <!--
+      <li>
+        <a class="btn inline-flex popup-btn-ajax"
+          href="/Core/Libs/Common/Widgets/ModRequirementsPopUp?id=323226&amp;game_id=1704" tabindex="0">
+          <svg title="" class="icon icon-manual">
+            <use xlink:href="https://www.nexusmods.com/assets/images/icons/icons.svg#icon-manual"></use>
+          </svg> <span class="flex-label">Manual download</span>
+        </a>
+      </li>
+      -->
+      <!--
+      sylin527 添加的 Download No Wait
+      <li>
+        <a class="btn inline-flex" href="#">
+          <svg class="icon icon-manual">
+            <use xlink:href="https://www.nexusmods.com/assets/images/icons/icons.svg#icon-manual"></use>
+          </svg>
+          <span class="flex-label" style="text-transform: none;">Download No Wait</span>
+        </a>
+      </li>
+      -->
+    </ul>
+  </div>
+  <!--
+    Preview file contents.
+    注意: 包含下载的实际文件名, 建议添加到 File Tab下.
+    应该是 nexusmods.com 要求所有 mod 的文件必须是 archive.
+    哪怕只有一个文本文件, 所以必然有 "Preview file contents" 按钮.
+  -->
+  <div class="tabbed-block">
+    <a class="btn-ajax-content-preview" data-gid="1704" data-mid="65241"
+      data-url="BlubboPineReplacer_V3_Set1.zip-65241-3-1-1673199274.zip">Preview file contents</a>
+  </div>
+</dd>

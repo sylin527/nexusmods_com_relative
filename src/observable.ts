@@ -20,17 +20,16 @@ export class Observable<T> {
   constructor(exec: Executor<T>) {
     const subscribers = this.subscribers
     exec({
-      /* 
+      /*
        next && next(value)) 是代码简写, 等价于
         if (next) {
-          next(value)) 
+          next(value))
         }
         动态语言可以这样, 静态语言一般不行
        */
       next: (value) => subscribers.forEach(({ next }) => next && next(value)),
       error: (err) => subscribers.forEach(({ error }) => error && error(err)),
-      complete: () =>
-        subscribers.forEach(({ complete }) => complete && complete()),
+      complete: () => subscribers.forEach(({ complete }) => complete && complete()),
     })
   }
 

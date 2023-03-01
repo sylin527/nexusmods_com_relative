@@ -1,0 +1,86 @@
+<div class="tabcontent tabcontent-mod-page" aria-live="assertive" role="status">
+  <span>
+    <!-- 好像是 ModTopicsTab 相关的分页脚本 -->
+    <script>//...</script>
+  </span>
+  <div id="tab-modtopics" class="container tab-topics condensed" style="display: block;">
+    <!-- heading: Forum topics -->
+    <h2 id="topics_tab_h2" data-game-id="1704" data-mod-id="9005">Forum topics</h2>
+    <div id="comment-container" class="comments">
+      <!-- head-nav: 显示页数, actions -->
+      <div class="comment-nav clearfix head-nav">
+        <!-- 好像是一个分页相关的脚本 -->
+        <script>//...</script>
+        <!-- pagination: 显示页数 -->
+        <div class="pagination clearfix">
+          <div class="navlabel">Pages</div>
+          <ul class="clearfix">
+            <li><a class="page-selected mfp-prevent-close">1</a></li>
+          </ul>
+        </div>
+        <!-- forum-nav: actions, 如 Add topic  -->
+        <div class="forum-nav">
+          <ul class="actions clearfix">
+            <li>
+              <a class="popup-btn btn inline-flex" href=".popup-topic" data-effect="mfp-zoom-in">
+                <svg title="" class="icon icon-comment"></svg>
+                <span class="flex-label">Add topic</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- topic table -->
+      <table id="mod_forum_topics" class="table forum-table flex-table">
+        <thead>
+          <tr class="forum_topic_tr">
+            <th class="table-topic header headerSortDown"><span class="table-header">Topic title</span></th>
+            <th class="table-replies header"><span class="table-header">Replies</span></th>
+            <th class="table-views header"><span class="table-header">Views</span></th>
+            <th class="table-author header"><span class="table-header">Author</span></th>
+            <th class="table-post header"><span class="table-header">Last post</span></th>
+          </tr>
+          <!-- sticky topic <tr> 确实在 <thead> 里 -->
+          <tr>
+            <td class="table-topic">
+              <!-- sticky topic -->
+              <div class="forum-sticky">Sticky</div>
+              <a class="go-to-topic" href="">Intentional clipping setup for No Grass In Objects</a>
+              <span class="table-topic-sub"></span>
+              <span class="table-inline-hidden">Last post: 01 Dec 2020, 6:56AM</span>
+            </td>
+            <td class="table-replies">0</td>
+            <td class="table-views">56</td>
+            <td class="table-author"><a class="table-link">code1k</a></td>
+            <td class="table-post">
+              <span class="table-date-author"> 01 Dec 2020, 6:56AM <a class="table-link">code1k</a></span>
+            </td>
+          </tr>
+        </thead>
+        <!-- non-sticky topic <tr> 在 <tbody> 里 -->
+        <tbody>
+          <tr>
+            <td class="table-topic"></td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- bottom-nav: 仅显示页数 -->
+      <div class="comment-nav clearfix bottom-nav"></div>
+    </div>
+    <!-- 容器 div: Add a new topic popup, 点 "Add topic" 后弹出, 默认是隐藏的 -->
+    <!--
+    <div class="popup-topic popup mfp-with-anim mfp-hide col-1-1">
+      <div class="col-1-1">
+        <h2>Add a new topic</h2>
+        <div class="info warning notice clearfix" style="display:none;" id="add-topic-error-box">
+          <svg title="" class="icon icon-info info-white"></svg>
+          <div class="info-content" id="add-topic-error-message">
+          </div>
+        </div>
+        <容器 div: Subject, Description, Topic content, Submit>
+        <div class="comment-reply clearfix">...</div>
+      </div>
+    </div>
+    -->
+  </div>
+</div>

@@ -20,16 +20,12 @@ https://www.nexusmods.com/Core/Libs/Common/Widgets/ModImagesList?RH_ModImagesLis
   <script>
     $(document).ready(function ($) {
       var RH = new RequestHelper()
-      RH.id = 'ModImagesList1'
-      RH.group_id = '1'
-      RH.target = 'list-modimages-1'
-      RH.uri = '/Core/Libs/Common/Widgets/ModImagesList'
-      RH.in_items = JSON.parse(
-        `{"game_id":"1704","id":"39113","page_size":"24","1page":"1","rh_group_id":"1"}`
-      )
-      RH.out_items = JSON.parse(
-        `{"game_id":1704,"id":39113,"page":1,"page_size":24}`
-      )
+      RH.id = "ModImagesList1"
+      RH.group_id = "1"
+      RH.target = "list-modimages-1"
+      RH.uri = "/Core/Libs/Common/Widgets/ModImagesList"
+      RH.in_items = JSON.parse(`{"game_id":"1704","id":"39113","page_size":"24","1page":"1","rh_group_id":"1"}`)
+      RH.out_items = JSON.parse(`{"game_id":1704,"id":39113,"page":1,"page_size":24}`)
       RH.InitSessionStorage()
       window.RH_ModImagesList1 = RH
     })
@@ -41,13 +37,13 @@ https://www.nexusmods.com/Core/Libs/Common/Widgets/ModImagesList?RH_ModImagesLis
     $(function () {
       Filters_Pagination.Load({
         RequestHelper: window.RH_ModImagesList1,
-        id: 'page',
+        id: "page",
         // [lyne408] `page:` 索引, 之后的第一个 '[' 与第二个 ']' 之间, `JSON.parse('[' + pages + ']', 取最 id)
         pages: [
-          { id: '1', text: '1' },
-          { id: '2', text: '2' },
-          { id: '3', text: '3' },
-        ],
+          { id: "1", text: "1" },
+          { id: "2", text: "2" },
+          { id: "3", text: "3" }
+        ]
       })
     })
   </script>

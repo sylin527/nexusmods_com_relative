@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "allowJs": false,
+    "lib": ["dom", "dom.iterable", "dom.asynciterable", "deno.ns"],
+    "strict": true
+  },
+  "fmt": {
+    "options": {
+      "semiColons": false,
+      "indentWidth": 2,
+      "lineWidth": 120
+    }
+  },
+  "tasks": {
+    "build_download_no_wait": "deno run --allow-all ./scripts/build_download_no_wait.ts",
+    "build_mod_documentation_utility": "deno run --allow-all ./scripts/build_mod_documentation_utility.ts"
+  }
+}
