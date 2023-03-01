@@ -5,13 +5,15 @@
     - [Tweak Page Title](#tweak-page-title)
     - [Copy Mod Name And Version (With Date Last Updated)](#copy-mod-name-and-version-with-date-last-updated)
     - [Simplify Mod Page](#simplify-mod-page)
+    - [Tweak Location to Standard Mod URL If Description Tab](#tweak-location-to-standard-mod-url-if-description-tab)
+    - [Show All Thumbnails](#show-all-thumbnails)
     - [Simplify Files Tab](#simplify-files-tab)
     - [Simplify Archived Files Tab](#simplify-archived-files-tab)
     - [Simplify Posts Tab](#simplify-posts-tab)
     - [Simplify Forum Topic Tab](#simplify-forum-topic-tab)
     - [Simplify Article Page](#simplify-article-page)
     - [Changelogs](#changelogs)
-      - [0.2.0.23.2.2](#0202322)
+      - [0.2.0.23.2.16](#02023216)
       - [0.1.3.2022.9.20](#0132022920)
       - [0.1.2.2022.9.19](#0122022919)
       - [0.1.1.beta.2022.9.17](#011beta2022917)
@@ -19,7 +21,7 @@
     - [Brief Overview](#brief-overview-1)
     - [Installation](#installation-1)
     - [Changelogs](#changelogs-1)
-      - [0.2.0.23.2.2](#0202322-1)
+      - [0.2.0.23.2.17](#02023217)
       - [0.1.0.23.1.25](#01023125)
   - [Development](#development)
 
@@ -115,6 +117,22 @@ Replace thumbnails to original, replace embedded YouTube videos to links.
 
 ![](user_guide/mod_documentation_utility/Mod_Page_simplified_2.png)
 
+### Tweak Location to Standard Mod URL If Description Tab
+
+Standard Mod URL is like `https://www.nexusmods.com/skyrimspecialedition/mods/85880`.
+
+`tab=description` URL is like `https://www.nexusmods.com/skyrimspecialedition/mods/85880?tab=description`.
+
+But both of them are Mod page URL, it not convenient for bookmark management, we don't need duplicated bookmarks.
+
+So this Userscript will **Tweak Location to Standard Mod URL If Description Tab** for bookmark management.
+
+### Show All Thumbnails
+
+If not working, resize you window then click the button again.
+
+This issues may be fixed in future.
+
 ### Simplify Files Tab
 
 Show description of files, spoilers and real file names downloaded.
@@ -171,15 +189,17 @@ Replace thumbnails to original, replace embedded YouTube videos to links.
 
 ### Changelogs
 
-#### 0.2.0.23.2.2
+#### 0.2.0.23.2.16
 
-- Now support show real filename of archived files tab.
+- Now support show real filename of archived files tab
 
   Your Must Configure The `apikey` Value of Userscript Storage.
 
-- Other improvements.
-
-- Refactor source code for maintainability.
+- Tweak Location to Standard Mod URL If Description Tab
+- Forum Topic And Article Page Will Reserve First-level Sticky And Author Comments
+- Show All Thumbnails
+- Other improvements
+- Refactor source code for maintainability
 
 #### 0.1.3.2022.9.20
 
@@ -226,7 +246,7 @@ The locate of this UserScript is English.
 
 ### Changelogs
 
-#### 0.2.0.23.2.2
+#### 0.2.0.23.2.17
 
 - Add "Download No Wait" button to file link page.
 - Add downloaded icon and datetime to file header after clicking the "Download No Wait" button.
