@@ -196,7 +196,8 @@ Replace thumbnails to original, replace embedded YouTube videos to links.
   Your Must Configure The `apikey` Value of Userscript Storage.
 
 - Tweak Location to Standard Mod URL If Description Tab
-- Forum Topic And Article Page Will Reserve First-level Sticky And Author Comments
+- File Tab: Can Remove Old Files
+- Forum Topic Tab And Article Page: Reserve First-level Sticky And Author Comments
 - Show All Thumbnails
 - Other improvements
 - Refactor source code for maintainability

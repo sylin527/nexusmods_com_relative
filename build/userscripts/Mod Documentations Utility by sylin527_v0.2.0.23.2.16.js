@@ -211,15 +211,15 @@
     }
     return _actionContainer;
   }
-  function createActionComponent(name) {
+  function createActionComponent(name2) {
     const actionButton = document.createElement("button");
-    actionButton.innerText = name;
+    actionButton.innerText = name2;
     actionButton.className = "action";
     return actionButton;
   }
-  function createActionWithMessageComponent(name) {
+  function createActionWithMessageComponent(name2) {
     const containerDiv = document.createElement("div");
-    const actionButton = createActionComponent(name);
+    const actionButton = createActionComponent(name2);
     const messageSpan = document.createElement("span");
     messageSpan.className = "message";
     containerDiv.append(actionButton, messageSpan);
@@ -635,11 +635,11 @@
   }
 
   // ../../../../Workspaces/@lyne408/userscript_lib/mod.ts
-  function setValue(name, value) {
-    return GM_setValue(name, value);
+  function setValue(name2, value) {
+    return GM_setValue(name2, value);
   }
-  function getValue(name) {
-    return GM_getValue(name);
+  function getValue(name2) {
+    return GM_getValue(name2);
   }
   async function downloadFiles(items, simultaneous, eachSuccess, eachFail) {
     const successes = [];
@@ -647,11 +647,11 @@
     for (let i = 0; i < items.length; i = i + simultaneous) {
       await Promise.all(
         items.slice(i, i + simultaneous).map((file) => {
-          const { url, name } = file;
+          const { url, name: name2 } = file;
           return new Promise((resolve) => {
             GM_download({
               url,
-              name,
+              name: name2,
               saveAs: false,
               onload() {
                 successes.push(file);
@@ -798,8 +798,8 @@
       if (checked) {
         const extWithDot = originalImageSrc.substring(originalImageSrc.lastIndexOf("."));
         const num = (i + 1).toString().padStart(digits, "0");
-        const name = `${relativeDirectory}/${num}_${replaceIllegalChars(title)}${extWithDot}`;
-        checkedImages.push({ url: originalImageSrc, name });
+        const name2 = `${relativeDirectory}/${num}_${replaceIllegalChars(title)}${extWithDot}`;
+        checkedImages.push({ url: originalImageSrc, name: name2 });
       }
     }
     return downloadFiles(checkedImages, 3, eachSuccess, eachFail);
@@ -1575,6 +1575,16 @@
     return button;
   }
 
+  // src/userscripts/userscripts_shared.ts
+  var isProduction = true;
+  function getAuthor() {
+    return "sylin527";
+  }
+
+  // src/userscripts/mod_documentation_utility/userscript.header.ts
+  var name = `Mod Documentations Utility by ${getAuthor()}${isProduction ? "" : " Development Version"}`;
+  var version = `0.2.0.23.2.16`;
+
   // src/userscripts/mod_documentation_utility/userscript.main.ts
   function initStorage() {
     const apiKey = getApiKey();
@@ -1607,7 +1617,7 @@
   }
   function main() {
     initModDocumentationUtility();
-    const scriptInfo = "Load userscript: sylin527's Mod Documentations Utility";
+    const scriptInfo = `Load userscript: ${name} ${version}`;
     console.log("%c [Info] " + scriptInfo, "color: green");
     console.log("%c [Info] URL: " + location.href, "color: green");
   }
